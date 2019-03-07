@@ -8,35 +8,38 @@ $(function () {
     var doc = $(document),
         win = $(window),
         canvas = $('#paper'),
-        ctx = canvas[0].getContext('2d'),
-        instructions = $('#instructions');
+        ctx = canvas[0].getContext('2d');
 
     // Generate an unique ID
     var id = Math.round($.now() * Math.random());
 
-    // A flag for drawing activity
-    var drawing = false;
+    // A flag for mouseDown activity
+    var mouseDown = false;
 
     var clients = {};
     var cursors = {};
 
     var socket = io();
     var userColor = '#fff';
-    var ModeEnums = {PAINT: 1, ERASE: 2};
-    var mode = ModeEnums.PAINT;
+    var ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, SHAPE: 4};
+    var mode = ModeEnums.SELECT;
+    var canvasState = new CanvasState(canvas[0]);
 
-    document.addEventListener('keydown', function (event) {
-        // Do something with the captured event.keyCode
-        console.log(event.keyCode);
-        if (event.code === 'KeyQ') {//Q
-            mode = ModeEnums.PAINT;
-        } else if (event.code === 'KeyW') {//W
-            mode = ModeEnums.ERASE;
-        } else if (event.code === 'KeyR') {
-            drawText(prev.x, prev.y, 0, "text", userColor);
-        }
-        return false;
-    }, false);
+    $('#pen').click(function(_){
+        mode = ModeEnums.PEN;
+    });
+    $('#move').click(function(_){
+        mode = ModeEnums.SELECT;
+    });
+    $('#text').click(function(_){
+        mode = ModeEnums.TEXT;
+    });
+    $('#shape').click(function(_){
+        mode = ModeEnums.SHAPE;
+    });
+    $('#erase').click(function(_){
+        // delete selected object from canvas
+    });
 
     socket.on('init', function (initData) {
         // id = initData.id;
@@ -57,8 +60,8 @@ $(function () {
             'top': data.y
         });
 
-        // Is the user drawing?
-        if (data.drawing && clients[data.id]) {
+        // Is the user mouseDown?
+        if (data.mouseDown && clients[data.id]) {
 
             // Draw a line on the canvas. clients[data.id] holds
             // the previous position of this user's mouse pointer
@@ -78,16 +81,48 @@ $(function () {
 
     canvas.on('mousedown', function (e) {
         e.preventDefault();
-        drawing = true;
-        prev.x = e.pageX;
-        prev.y = e.pageY;
-
-        // Hide the instructions
-        instructions.fadeOut();
+        var mX = e.pageX;
+        var mY = e.pageY;
+        switch (mode) {
+            case ModeEnums.PEN:
+                mouseDown = true;
+                var p = new PathRender(userColor, mX, mY);
+                canvasState.addPath(p);
+                break;
+            case ModeEnums.SHAPE:
+                break;
+            case ModeEnums.TEXT:
+                break;
+            case ModeEnums.SELECT:
+                var newSelected = false;
+                canvasState.pathList.forEach(function(p){
+                    if (p.contains(mX, mY)) {
+                        var mySel = p;
+                        // Keep track of where in the object we clicked
+                        // so we can move it smoothly (see mousemove)
+                        // myState.dragoffx = mX - mySel.x;
+                        // myState.dragoffy = mY - mySel.y;
+                        canvasState.dragging = true;
+                        canvasState.selection = mySel;
+                        canvasState.valid = false;
+                        newSelected = true;
+                    }
+                });
+                if (!newSelected && canvasState.selection) {
+                    canvasState.selection = null;
+                    canvasState.valid = false; // Need to clear the old selection border
+                }
+                break;
+        }
     });
 
+    setInterval(function () {
+        canvasState.draw(ctx);
+    }, 30);
+
     doc.bind('mouseup mouseleave', function () {
-        drawing = false;
+        mouseDown = false;
+        canvasState.dragging = false;
     });
 
     var lastEmit = $.now();
@@ -97,7 +132,7 @@ $(function () {
             socket.emit('mousemove', {
                 'x': e.pageX,
                 'y': e.pageY,
-                'drawing': drawing,
+                'mouseDown': mouseDown,
                 'id': id,
                 'color': userColor,
             });
@@ -107,13 +142,20 @@ $(function () {
         // Draw a line for the current user's movement, as it is
         // not received in the socket.on('moving') event above
 
-        if (drawing) {
-            if (mode === ModeEnums.PAINT) {
-                drawLine(prev.x, prev.y, e.pageX, e.pageY, userColor);
-            } else if (mode === ModeEnums.ERASE) {
-                erase(e.pageX, e.pageY);
+        if (mouseDown) {
+            switch (mode) {
+                case ModeEnums.PEN:
+                    var p = canvasState.pathList[canvasState.pathList.length - 1];
+                    p.addPoint(e.pageX, e.pageY);
+                    p.draw(ctx);
+                    break;
+                case ModeEnums.SHAPE:
+                    break;
+                case ModeEnums.TEXT:
+                    break;
+                case ModeEnums.SELECT:
+                    break;
             }
-
             prev.x = e.pageX;
             prev.y = e.pageY;
         }

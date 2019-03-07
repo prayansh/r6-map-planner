@@ -1,4 +1,4 @@
-/** Rectangle Render **/
+// ==================== Rectangle Render
 function RectangleRender(x, y, w, h, fill) {
     // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
     // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
@@ -24,7 +24,7 @@ RectangleRender.prototype.contains = function (mx, my) {
         (this.y <= my) && (this.y + this.h >= my);
 };
 
-/** Text Render **/
+// ==================== Text Render
 function TextRender(fontSize, x, y, rot, text, fill) {
     this.x = x || 0;
     this.y = y || 0;
@@ -54,14 +54,35 @@ TextRender.prototype.contains = function (mx, my) {
         (this.y <= my) && (this.x + this.height >= my);
 };
 
-function PathRenderer(fill) {
+TextRender.prototype.stroke = function (ctx, strokeStyle, strokeWidth) {
+    ctx.save();
+    this.width = ctx.measureText(this.text).width;
+    this.height = this.fontSize;
+    ctx.fillStyle = this.fill;
+    ctx.rotate(this.rot);
+    ctx.translate(this.x, this.y);
+    ctx.textAlign = "center";
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = strokeWidth;
+    ctx.strokeText(this.text, 0, 0);
+    ctx.restore();
+};
+
+// ==================== Pen Render
+function PathRender(fill, lastX, lastY) {
     this.fill = fill;
+    this.lastX = lastX;
+    this.lastY = lastY;
+    this.minX = lastX;
+    this.minY = lastY;
+    this.maxX = lastX;
+    this.maxY = lastY;
     this.points = [];
     this.pointsNotDrawn = [];
 }
 
-PathRenderer.prototype.draw = function (ctx) {
-    while (!this.pointsNotDrawn.empty()) {
+PathRender.prototype.draw = function (ctx) {
+    while (this.pointsNotDrawn.length !== 0) {
         var p = this.pointsNotDrawn.shift();
         ctx.beginPath();
         ctx.strokeStyle = this.fill;
@@ -72,7 +93,99 @@ PathRenderer.prototype.draw = function (ctx) {
     }
 };
 
-PathRenderer.prototype.addPoint = function (fromX, fromY, toX, toY) {
-    this.points.push({frX: fromX, frY: fromY, tX: toX, tY: toY});
-    this.pointsNotDrawn.push({frX: fromX, frY: fromY, tX: toX, tY: toY});
+PathRender.prototype.addPoint = function (toX, toY) {
+    var p = {frX: this.lastX, frY: this.lastY, tX: toX, tY: toY};
+    this.minX = Math.min(this.minX, toX);
+    this.minY = Math.min(this.minY, toY);
+    this.maxX = Math.max(this.maxX, toX);
+    this.maxY = Math.max(this.maxY, toY);
+    this.lastX = toX;
+    this.lastY = toY;
+    this.points.push(p);
+    this.pointsNotDrawn.push(p);
+};
+
+PathRender.prototype.invalidate = function () {
+    this.pointsNotDrawn.length = 0;
+    var pointsNotDrawn = this.pointsNotDrawn;
+    this.points.forEach(function (p) {
+        pointsNotDrawn.push(p);
+    });
+};
+
+PathRender.prototype.contains = function (mx, my) {
+    // All we have to do is make sure the Mouse X,Y fall in the area between
+    // the shape's X and (X + Width) and its Y and (Y + Height)
+    return (this.minX <= mx) && (this.maxX >= mx) &&
+        (this.minY <= my) && (this.maxY >= my);
+};
+
+PathRender.prototype.stroke = function (ctx, strokeStyle, strokeWidth) {
+    ctx.save();
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = strokeWidth;
+    ctx.strokeRect(this.minX, this.minY, this.maxX - this.minX, this.maxY - this.minY);
+    ctx.restore();
+};
+
+
+// ==================== Canvas State
+function CanvasState(canvas) {
+    this.pathList = [];
+    this.iconList = [];
+    this.textList = [];
+    this.valid = true; // when set to false, redraw everything
+    this.dragging = false; // Keep track of when we are dragging
+    this.selection = null;
+    this.canvas = canvas;
+}
+
+CanvasState.prototype.draw = function (ctx) {
+    // TODO redraw
+    if (!this.valid) {
+        this.clear(ctx);
+        // draw all renders
+        this.pathList.forEach(function (p) {
+            p.invalidate();
+            p.draw(ctx);
+        });
+        this.textList.forEach(function (p) {
+            p.draw(ctx);
+        });
+
+        // draw selection
+        // right now this is just a stroke along the edge of the selected Shape
+        if (this.selection != null) {
+            var selectionColor = '#CC0000';
+            var selectionWidth = 2;
+            this.selection.stroke(ctx, selectionColor, selectionWidth);
+        }
+
+        // ** Add stuff you want drawn on top all the time here **
+        this.valid = true;
+    }
+};
+
+CanvasState.prototype.clear = function (ctx) {
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
+CanvasState.prototype.invalidate = function () {
+    this.valid = false;
+};
+
+CanvasState.prototype.addPath = function (path) {
+    this.pathList.push(path);
+};
+
+CanvasState.prototype.addIcon = function (icon) {
+    this.iconList.push(icon);
+};
+
+CanvasState.prototype.addShape = function (shape) {
+    this.iconList.push(shape);
+};
+
+CanvasState.prototype.addText = function (text) {
+    this.textList.push(text);
 };

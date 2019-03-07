@@ -14,7 +14,7 @@
 --------------------------*/
 
 
-html{
+.canvas-bg{
   background:url('https://cdn.hyperdev.com/feca3b9d-2ddb-43ff-98fa-57abfe77506b%2Fbg.png') repeat #e4e4e4;
 
   /* This will hide the extra canvas if the screen is small */
@@ -88,6 +88,16 @@ h3{
   background:url('https://cdn.hyperdev.com/feca3b9d-2ddb-43ff-98fa-57abfe77506b%2Fpointer.png') no-repeat -4px 0;
 }
 
+.tool-panel {
+  /* overlay */
+  position: absolute;
+  z-index: 9;
+}
+
+#main_tools_fulcrum {
+  /*width: 20px;*/
+  /*background: dodgerblue;*/
+}
 
 
 /*----------------------------

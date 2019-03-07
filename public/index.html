@@ -1,40 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>Node.js Multiplayer Drawing Game | Tutorialzine Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <!-- The stylesheets -->
+    <link rel="stylesheet" href="stylesheets/style.css"/>
 
-  <!-- The stylesheets -->
-  <link rel="stylesheet" href="stylesheets/style.css" />
+    <title>Node.js Multiplayer Drawing Game | Tutorialzine Demo</title>
 
-  <!--<[if lt IE 9]>-->
+    <!--<[if lt IE 9]>-->
     <!--<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>-->
-  <!--<![endif]-->
+    <!--<![endif]-->
 </head>
 
 <body>
 <div id="cursors">
-  <!-- The mouse pointers will be created here -->
+    <!-- The mouse pointers will be created here -->
+</div>
+<div id="main_tools" class="tool-panel btn-toolbar mb-3" role="toolbar"
+     aria-label="Toolbar with button groups">
+    <div id="main_tools_fulcrum" class="input-group-prepend">
+        <div class="input-group-text">&#8942;</div>
+    </div>
+    <div class="btn-group mr-2" role="group" aria-label="First group">
+        <button id="move" type="button" class="radio btn btn-secondary active">Move</button>
+        <button id="pen" type="button" class="radio btn btn-secondary">Pen</button>
+        <button id="text" type="button" class="radio btn btn-secondary">Text</button>
+        <button id="shape" type="button" class="radio btn btn-secondary">Shape</button>
+        <button id="erase" type="button" class="btn btn-secondary">Erase</button>
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text" id="btnGroupAddon">T</div>
+        </div>
+        <input type="text" class="form-control" placeholder="Text"
+               aria-label="Text Here" aria-describedby="btnGroupAddon">
+    </div>
 </div>
 
-<canvas id="paper" width="1900" height="1000">
-  Your browser needs to support canvas for this to work!
+
+<canvas id="paper" width="1900" height="1000" class="canvas-bg">
+    Your browser needs to support canvas for this to work!
 </canvas>
 
-<hgroup id="instructions">
-  <h1>Draw anywhere!</h1>
-  <h2>You will see everyone else who's doing the same.</h2>
-  <h3>Tip: if the stage gets dirty, simply reload the page</h3>
-</hgroup>
-
 <footer>
-  <h2>R6 Tactical Board</h2>
+    <h2>R6 Tactical Board</h2>
 </footer>
 
 <!-- JavaScript includes. Notice that socket.io.js is served by node.js -->
 <script src="/socket.io/socket.io.js"></script>
-<script src="//code.jquery.com/jquery-1.8.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="javascripts/Renders.js"></script>
 <script src="javascripts/script.js"></script>
+<script src="javascripts/ui.js"></script>
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
