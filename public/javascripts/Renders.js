@@ -77,7 +77,7 @@ TextRender.prototype.displace = function (dx, dy) {
 };
 
 // ==================== Pen Render
-function PathRender(fill, lastX, lastY) {
+function PathRender(lastX, lastY, fill) {
     this.fill = fill;
     this.lastX = lastX;
     this.lastY = lastY;

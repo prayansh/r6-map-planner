@@ -91,7 +91,7 @@ $(function () {
         mouseDown = true;
         switch (mode) {
             case ModeEnums.PEN: {
-                var p = new PathRender(userColor, mX, mY);
+                var p = new PathRender(mX, mY, userColor);
                 canvasState.addPath(p);
             }
                 break;
@@ -145,9 +145,6 @@ $(function () {
         }
     });
 
-    setInterval(function () {
-        canvasState.draw(ctx);
-    }, 30);
 
     doc.bind('mouseup mouseleave', function () {
         mouseDown = false;
@@ -206,7 +203,6 @@ $(function () {
 
     // Remove inactive clients after 10 seconds of inactivity
     setInterval(function () {
-
         for (ident in clients) {
             if ($.now() - clients[ident].updated > 10000) {
 
@@ -218,33 +214,10 @@ $(function () {
                 delete cursors[ident];
             }
         }
-
     }, 10000);
 
-    function drawLine(fromx, fromy, tox, toy, color) {
-        console.log("Drawing line: " + color);
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.moveTo(fromx, fromy);
-        ctx.lineTo(tox, toy);
-        ctx.stroke();
-        ctx.closePath();
-    }
-
-    function erase(xpos, ypos) {
-        context.fillStyle = 'rgba(0,0,0,0)';
-        context.fill();
-    }
-
-    function drawText(xpos, ypos, rotation, text, color) {
-        console.log("Drawing text: ");
-        ctx.save();
-        ctx.font = "54px Arial";
-        ctx.fillStyle = color;
-        ctx.rotate(rotation);
-        ctx.translate(xpos, ypos);
-        ctx.textAlign = "center";
-        ctx.fillText(text, 0, 0);
-        ctx.restore();
-    }
+    // Redraw check
+    setInterval(function () {
+        canvasState.draw(ctx);
+    }, 30);  //maybe longer interval???
 });
