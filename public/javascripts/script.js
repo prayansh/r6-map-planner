@@ -85,16 +85,25 @@ $(function () {
         var mY = e.pageY;
         mouseDown = true;
         switch (mode) {
-            case ModeEnums.PEN:
+            case ModeEnums.PEN: {
                 var p = new PathRender(userColor, mX, mY);
                 canvasState.addPath(p);
+            }
                 break;
-            case ModeEnums.SHAPE:
+            case ModeEnums.SHAPE: {
+
+            }
                 break;
-            case ModeEnums.TEXT:
+            case ModeEnums.TEXT: {
+                var t = new TextRender(96, mX, mY, 0, "Hello", userColor);
+                canvasState.addText(t);
+                t.draw(ctx);
+            }
                 break;
-            case ModeEnums.SELECT:
+            case ModeEnums.SELECT: {
+                console.log("(" + mX + ", " + mY + ")");
                 var newSelected = false;
+                // Check for path selection
                 canvasState.pathList.forEach(function (p) {
                     if (p.contains(mX, mY)) {
                         var mySel = p;
@@ -108,10 +117,27 @@ $(function () {
                         newSelected = true;
                     }
                 });
+                if (!newSelected) { // Check for text selection
+                    canvasState.textList.forEach(function (t) {
+                        if (t.contains(mX, mY)) {
+                            var mySel = t;
+                            // Keep track of where in the object we clicked
+                            // so we can move it smoothly (see mousemove)
+                            canvasState.dragStartX = mX;
+                            canvasState.dragStartY = mY;
+                            canvasState.dragging = true;
+                            canvasState.selection = mySel;
+                            canvasState.valid = false;
+                            newSelected = true;
+                            console.log("Selecte text");
+                        }
+                    });
+                }
                 if (!newSelected && canvasState.selection) {
                     canvasState.selection = null;
                     canvasState.valid = false; // Need to clear the old selection border
                 }
+            }
                 break;
         }
     });

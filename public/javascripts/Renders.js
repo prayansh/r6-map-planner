@@ -36,14 +36,17 @@ function TextRender(fontSize, x, y, rot, text, fill) {
 
 TextRender.prototype.draw = function (ctx) {
     ctx.save();
+    ctx.font = this.fontSize + 'px serif';
     this.width = ctx.measureText(this.text).width;
     this.height = this.fontSize;
     ctx.fillStyle = this.fill;
     ctx.rotate(this.rot);
-    ctx.translate(this.x, this.y);
-    ctx.textAlign = "center";
-    ctx.fillText(this.text, 0, 0);
+    ctx.fillText(this.text, this.x, this.y);
     ctx.restore();
+    // console.log("x:" + this.x + ", y:" + this.y);
+    // console.log("width:" + this.width + ", height:" + this.height);
+    // console.log("x: (" + (this.x) + ", " + (this.x + this.width) + ")");
+    // console.log("y: (" + (this.y) + ", " + (this.y + this.height) + ")");
 };
 
 // Determine if a point is inside the shape's bounds
@@ -51,21 +54,30 @@ TextRender.prototype.contains = function (mx, my) {
     // All we have to do is make sure the Mouse X,Y fall in the area between
     // the shape's X and (X + Width) and its Y and (Y + Height)
     return (this.x <= mx) && (this.x + this.width >= mx) &&
-        (this.y <= my) && (this.x + this.height >= my);
+        (this.y - this.height <= my) && (this.y >= my);
 };
 
 TextRender.prototype.stroke = function (ctx, strokeStyle, strokeWidth) {
     ctx.save();
+    ctx.font = this.fontSize + 'px serif';
     this.width = ctx.measureText(this.text).width;
     this.height = this.fontSize;
-    ctx.fillStyle = this.fill;
-    ctx.rotate(this.rot);
-    ctx.translate(this.x, this.y);
-    ctx.textAlign = "center";
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = strokeWidth;
-    ctx.strokeText(this.text, 0, 0);
+    ctx.rotate(this.rot);
+    ctx.strokeText(this.text, this.x, this.y);
     ctx.restore();
+    // Maybe rectangle is better TODO decide
+    // ctx.save();
+    // ctx.strokeStyle = strokeStyle;
+    // ctx.lineWidth = strokeWidth;
+    // ctx.strokeRect(this.x, this.y, this.width, this.height);
+    // ctx.restore();
+};
+
+TextRender.prototype.displace = function (dx, dy) {
+    this.x += dx;
+    this.y += dy;
 };
 
 // ==================== Pen Render
@@ -172,8 +184,8 @@ CanvasState.prototype.draw = function (ctx) {
             p.invalidate();
             p.draw(ctx);
         });
-        this.textList.forEach(function (p) {
-            p.draw(ctx);
+        this.textList.forEach(function (t) {
+            t.draw(ctx);
         });
 
         // draw selection
