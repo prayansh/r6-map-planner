@@ -43,10 +43,6 @@ TextRender.prototype.draw = function (ctx) {
     ctx.rotate(this.rot);
     ctx.fillText(this.text, this.x, this.y);
     ctx.restore();
-    // console.log("x:" + this.x + ", y:" + this.y);
-    // console.log("width:" + this.width + ", height:" + this.height);
-    // console.log("x: (" + (this.x) + ", " + (this.x + this.width) + ")");
-    // console.log("y: (" + (this.y) + ", " + (this.y + this.height) + ")");
 };
 
 // Determine if a point is inside the shape's bounds
@@ -223,4 +219,24 @@ CanvasState.prototype.addShape = function (shape) {
 
 CanvasState.prototype.addText = function (text) {
     this.textList.push(text);
+};
+
+CanvasState.prototype.deselect = function () {
+    this.selection = null;
+    this.valid = false; // Need to clear the old selection border
+};
+
+CanvasState.prototype.remove = function (obj) {
+    var list;
+    if (obj instanceof PathRender) {
+        list = this.pathList;
+    } else if (obj instanceof TextRender) {
+        list = this.textList;
+    }
+    for (var i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
+            list.splice(i, 1);
+            break;
+        }
+    }
 };

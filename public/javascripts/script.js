@@ -39,6 +39,11 @@ $(function () {
     });
     $('#erase').click(function (_) {
         // delete selected object from canvas
+        if (canvasState.selection) {
+            canvasState.remove(canvasState.selection);
+            canvasState.invalidate();
+            canvasState.deselect();
+        }
     });
 
     socket.on('init', function (initData) {
@@ -129,13 +134,11 @@ $(function () {
                             canvasState.selection = mySel;
                             canvasState.valid = false;
                             newSelected = true;
-                            console.log("Selecte text");
                         }
                     });
                 }
                 if (!newSelected && canvasState.selection) {
-                    canvasState.selection = null;
-                    canvasState.valid = false; // Need to clear the old selection border
+                    canvasState.deselect()
                 }
             }
                 break;
