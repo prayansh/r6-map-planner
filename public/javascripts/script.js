@@ -25,19 +25,19 @@ $(function () {
     var mode = ModeEnums.SELECT;
     var canvasState = new CanvasState(canvas[0]);
 
-    $('#pen').click(function(_){
+    $('#pen').click(function (_) {
         mode = ModeEnums.PEN;
     });
-    $('#move').click(function(_){
+    $('#move').click(function (_) {
         mode = ModeEnums.SELECT;
     });
-    $('#text').click(function(_){
+    $('#text').click(function (_) {
         mode = ModeEnums.TEXT;
     });
-    $('#shape').click(function(_){
+    $('#shape').click(function (_) {
         mode = ModeEnums.SHAPE;
     });
-    $('#erase').click(function(_){
+    $('#erase').click(function (_) {
         // delete selected object from canvas
     });
 
@@ -83,9 +83,9 @@ $(function () {
         e.preventDefault();
         var mX = e.pageX;
         var mY = e.pageY;
+        mouseDown = true;
         switch (mode) {
             case ModeEnums.PEN:
-                mouseDown = true;
                 var p = new PathRender(userColor, mX, mY);
                 canvasState.addPath(p);
                 break;
@@ -95,13 +95,13 @@ $(function () {
                 break;
             case ModeEnums.SELECT:
                 var newSelected = false;
-                canvasState.pathList.forEach(function(p){
+                canvasState.pathList.forEach(function (p) {
                     if (p.contains(mX, mY)) {
                         var mySel = p;
                         // Keep track of where in the object we clicked
                         // so we can move it smoothly (see mousemove)
-                        // myState.dragoffx = mX - mySel.x;
-                        // myState.dragoffy = mY - mySel.y;
+                        canvasState.dragStartX = mX;
+                        canvasState.dragStartY = mY;
                         canvasState.dragging = true;
                         canvasState.selection = mySel;
                         canvasState.valid = false;
@@ -128,6 +128,9 @@ $(function () {
     var lastEmit = $.now();
 
     doc.on('mousemove', function (e) {
+        // e.preventDefault();
+        var mX = e.pageX;
+        var mY = e.pageY;
         if ($.now() - lastEmit > 30) {
             socket.emit('mousemove', {
                 'x': e.pageX,
@@ -154,6 +157,17 @@ $(function () {
                 case ModeEnums.TEXT:
                     break;
                 case ModeEnums.SELECT:
+                    if (canvasState.dragging) {
+                        // We don't want to drag the object by its top-left corner,
+                        // we want to drag from where we clicked.
+                        // Thats why we saved the offset and use it here
+                        var dx = mX - canvasState.dragStartX;
+                        var dy = mY - canvasState.dragStartY;
+                        canvasState.dragStartX = mX;
+                        canvasState.dragStartY = mY;
+                        canvasState.selection.displace(dx, dy);
+                        canvasState.invalidate(); // Something's dragging so we must redraw
+                    }
                     break;
             }
             prev.x = e.pageX;

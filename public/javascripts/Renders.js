@@ -96,8 +96,8 @@ PathRender.prototype.draw = function (ctx) {
 PathRender.prototype.addPoint = function (toX, toY) {
     var p = {frX: this.lastX, frY: this.lastY, tX: toX, tY: toY};
     this.minX = Math.min(this.minX, toX);
-    this.minY = Math.min(this.minY, toY);
     this.maxX = Math.max(this.maxX, toX);
+    this.minY = Math.min(this.minY, toY);
     this.maxY = Math.max(this.maxY, toY);
     this.lastX = toX;
     this.lastY = toY;
@@ -105,9 +105,30 @@ PathRender.prototype.addPoint = function (toX, toY) {
     this.pointsNotDrawn.push(p);
 };
 
+PathRender.prototype.displace = function (dx, dy) {
+    var maxX = -Infinity;
+    var minX = Infinity;
+    var maxY = -Infinity;
+    var minY = Infinity;
+    this.points.forEach(function (p) {
+        p.frX += dx;
+        p.tX += dx;
+        p.frY += dy;
+        p.tY += dy;
+        minX = Math.min(minX, p.tX);
+        maxX = Math.max(maxX, p.tX);
+        minY = Math.min(minY, p.tY);
+        maxY = Math.max(maxY, p.tY);
+    });
+    this.minX = minX;
+    this.maxX = maxX;
+    this.minY = minY;
+    this.maxY = maxY;
+};
+
 PathRender.prototype.invalidate = function () {
     this.pointsNotDrawn.length = 0;
-    var pointsNotDrawn = this.pointsNotDrawn;
+    var pointsNotDrawn = this.pointsNotDrawn; // for closure
     this.points.forEach(function (p) {
         pointsNotDrawn.push(p);
     });
@@ -136,6 +157,8 @@ function CanvasState(canvas) {
     this.textList = [];
     this.valid = true; // when set to false, redraw everything
     this.dragging = false; // Keep track of when we are dragging
+    this.dragStartX = 0;
+    this.dragStartY = 0;
     this.selection = null;
     this.canvas = canvas;
 }
