@@ -55,7 +55,7 @@ $(function () {
     });
 
     function redrawPeerCanvas() {
-        ctxOther.clearRect(0, 0, ctxOther.width, ctxOther.height);
+        ctxOther.clearRect(0, 0, collab[0].width, collab[0].height);
         Object.keys(clients).forEach(function (id) {
             var data = clients[id].canvasState;
             var clientColor = clients[id].color;
