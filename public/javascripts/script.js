@@ -8,7 +8,10 @@ $(function () {
     var doc = $(document),
         win = $(window),
         canvas = $('#paper'),
-        ctx = canvas[0].getContext('2d');
+        collab = $('#collab'),
+        ctx = canvas[0].getContext('2d'),
+        ctxOther = collab[0].getContext('2d')
+    ;
 
     // Generate an unique ID
     var id = Math.round($.now() * Math.random());
@@ -51,6 +54,23 @@ $(function () {
         userColor = initData.color;
     });
 
+    function redrawPeerCanvas() {
+        ctxOther.clearRect(0, 0, ctxOther.width, ctxOther.height);
+        Object.keys(clients).forEach(function (id) {
+            var data = clients[id].canvasState;
+            var clientColor = clients[id].color;
+            data.pathList.forEach(function (path) {
+                var p = new PathRender(0, 0, clientColor);
+                p.pointsNotDrawn = path.points;
+                p.draw(ctxOther);
+            });
+            data.textList.forEach(function (text) {
+                var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
+                t.draw(ctxOther);
+            });
+        });
+    }
+
     // Receive data from other clients
     socket.on('moving', function (data) {
 
@@ -65,18 +85,11 @@ $(function () {
             'top': data.y
         });
 
-        // Is the user mouseDown?
-        if (data.mouseDown && clients[data.id]) {
-
-            // Draw a line on the canvas. clients[data.id] holds
-            // the previous position of this user's mouse pointer
-
-            drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y, data.color);
-        }
-
         // Saving the current client state
         clients[data.id] = data;
+        console.log("Received: " + JSON.stringify(data));
         clients[data.id].updated = $.now();
+        redrawPeerCanvas();
     });
 
     var prev = {
@@ -153,17 +166,39 @@ $(function () {
 
     var lastEmit = $.now();
 
+    function toDataObject(canvasState) {
+        var data = {};
+        data.pathList = [];
+        canvasState.pathList.forEach(function (path) {
+            var p = {};
+            p.points = path.points;
+            data.pathList.push(p);
+        });
+        data.textList = [];
+        canvasState.textList.forEach(function (text) {
+            var t = {};
+            t.x = text.x;
+            t.y = text.y;
+            t.fontSize = text.fontSize;
+            t.text = text.text;
+            data.textList.push(t);
+        });
+        console.log("Sending: " + JSON.stringify(data));
+        return data;
+    }
+
     doc.on('mousemove', function (e) {
         // e.preventDefault();
         var mX = e.pageX;
         var mY = e.pageY;
-        if ($.now() - lastEmit > 30) {
+        if ($.now() - lastEmit > 60) {
             socket.emit('mousemove', {
                 'x': e.pageX,
                 'y': e.pageY,
-                'mouseDown': mouseDown,
                 'id': id,
                 'color': userColor,
+                'canvasState': toDataObject(canvasState),
+                // 'mouseDown': mouseDown,
             });
             lastEmit = $.now();
         }
@@ -218,6 +253,6 @@ $(function () {
 
     // Redraw check
     setInterval(function () {
-        canvasState.draw(ctx);
+        canvasState.draw(ctx); // check for invalidation here
     }, 30);  //maybe longer interval???
 });

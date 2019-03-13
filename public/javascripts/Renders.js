@@ -26,12 +26,12 @@ RectangleRender.prototype.contains = function (mx, my) {
 
 // ==================== Text Render
 function TextRender(fontSize, x, y, rot, text, fill) {
+    this.fontSize = fontSize;
     this.x = x || 0;
     this.y = y || 0;
     this.rot = rot || 0;
     this.text = text || 'Hello World!';
     this.fill = fill || '#AAAAAA';
-    this.fontSize = fontSize;
 }
 
 TextRender.prototype.draw = function (ctx) {
@@ -171,18 +171,22 @@ function CanvasState(canvas) {
     this.canvas = canvas;
 }
 
+CanvasState.prototype.forceDraw = function (ctx) {
+    // draw all renders
+    this.pathList.forEach(function (p) {
+        p.invalidate();
+        p.draw(ctx);
+    });
+    this.textList.forEach(function (t) {
+        t.draw(ctx);
+    });
+};
+
 CanvasState.prototype.draw = function (ctx) {
     // TODO redraw
     if (!this.valid) {
         this.clear(ctx);
-        // draw all renders
-        this.pathList.forEach(function (p) {
-            p.invalidate();
-            p.draw(ctx);
-        });
-        this.textList.forEach(function (t) {
-            t.draw(ctx);
-        });
+        this.forceDraw(ctx);
 
         // draw selection
         // right now this is just a stroke along the edge of the selected Shape

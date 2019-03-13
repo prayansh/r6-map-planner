@@ -44,7 +44,7 @@ io.sockets.on('connection', function (socket) {
     // var id = Math.round($.now() * Math.random());
     var color = colors.shift();
     colors.push(color);
-    var initData = {color: color};
+    var initData = {color: color}; // parameters when a new user joins
     socket.emit('init', initData);
     // Start listening for mouse move events
     socket.on('mousemove', function (data) {
