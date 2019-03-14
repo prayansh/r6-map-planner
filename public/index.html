@@ -22,36 +22,39 @@
 <div id="main_tools" class="tool-panel btn-toolbar mb-3" role="toolbar"
      aria-label="Toolbar with button groups">
     <div id="main_tools_fulcrum" class="input-group-prepend">
-        <div class="input-group-text">&#8942;</div>
+        <div id="fulcrum_div" class="input-group-text"></div>
     </div>
-    <div class="btn-group mr-2" role="group" aria-label="First group">
-        <button id="move" type="button" class="radio btn btn-secondary active">Move</button>
-        <button id="pen" type="button" class="radio btn btn-secondary">Pen</button>
-        <button id="text" type="button" class="radio btn btn-secondary">Text</button>
-        <button id="shape" type="button" class="radio btn btn-secondary">Shape</button>
-        <button id="erase" type="button" class="btn btn-secondary">Erase</button>
+    <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="First group">
+        <button id="move_tool" type="button" class="radio btn btn-secondary active">Move</button>
+        <button id="pen_tool" type="button" class="radio btn btn-secondary">Pen</button>
+        <button id="text_tool" type="button" class="radio btn btn-secondary">Text</button>
+        <button id="shape_tool" type="button" class="radio btn btn-secondary">Shape</button>
+        <button id="erase_tool" type="button" class="btn btn-secondary">Erase</button>
     </div>
-    <div class="input-group">
+    <div id="text_tools" class="input-group invisible">
         <div class="input-group-prepend">
-            <div class="input-group-text" id="btnGroupAddon">T</div>
+            <div class="input-group-text" id="text_label">T</div>
         </div>
         <input type="text" class="form-control" placeholder="Text"
-               aria-label="Text Here" aria-describedby="btnGroupAddon">
+               aria-label="Text Here" aria-describedby="text_label"
+               id="text_tool_data">
+        <div class="input-group-prepend">
+            <div class="input-group-text" id="font_label">Size</div>
+        </div>
+        <input type="number" class="form-control" value="32"
+               aria-describedby="text_label"
+               min="20" max="96" id="text_tool_size">
     </div>
 </div>
 
 <div>
-    <canvas id="paper" width="1900" height="1000" class="canvas-bg user-canvas">
+    <canvas id="paper" width="1900" height="1000" class="user-canvas">
         Your browser needs to support canvas for this to work!
     </canvas>
-    <canvas id="collab" width="1900" height="1000" class="peer-canvas">
+    <canvas id="collab" width="1900" height="1000" class="canvas-bg peer-canvas">
         Your browser needs to support canvas for this to work!
     </canvas>
 </div>
-
-<footer>
-    <h2>R6 Tactical Board</h2>
-</footer>
 
 <!-- JavaScript includes. Notice that socket.io.js is served by node.js -->
 <script src="/socket.io/socket.io.js"></script>

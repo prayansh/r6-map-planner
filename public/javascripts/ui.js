@@ -2,8 +2,13 @@ dragElement(document.getElementById("main_tools"));
 
 // Make buttons appear active in Main Toolbar
 $('#main_tools .radio').click(function (_) {
+    $('#text_tools').addClass("invisible");
     $(this).siblings().removeClass("active");
     $(this).addClass("active");
+});
+
+$('#text_tool').click(function (_) {
+    $('#text_tools').removeClass("invisible");
 });
 
 function dragElement(elmnt) {

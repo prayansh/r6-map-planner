@@ -28,19 +28,19 @@ $(function () {
     var mode = ModeEnums.SELECT;
     var canvasState = new CanvasState(canvas[0]);
 
-    $('#pen').click(function (_) {
+    $('#pen_tool').click(function (_) {
         mode = ModeEnums.PEN;
     });
-    $('#move').click(function (_) {
+    $('#move_tool').click(function (_) {
         mode = ModeEnums.SELECT;
     });
-    $('#text').click(function (_) {
+    $('#text_tool').click(function (_) {
         mode = ModeEnums.TEXT;
     });
-    $('#shape').click(function (_) {
+    $('#shape_tool').click(function (_) {
         mode = ModeEnums.SHAPE;
     });
-    $('#erase').click(function (_) {
+    $('#erase_tool').click(function (_) {
         // delete selected object from canvas
         if (canvasState.selection) {
             canvasState.remove(canvasState.selection);
@@ -52,6 +52,7 @@ $(function () {
     socket.on('init', function (initData) {
         // id = initData.id;
         userColor = initData.color;
+        $('#fulcrum_div').css({'background': userColor});
     });
 
     function redrawPeerCanvas() {
@@ -113,9 +114,13 @@ $(function () {
             }
                 break;
             case ModeEnums.TEXT: {
-                var t = new TextRender(96, mX, mY, 0, "Hello", userColor);
-                canvasState.addText(t);
-                t.draw(ctx);
+                const fontSize = $("#text_tool_size").val();
+                const text = $("#text_tool_data").val();
+                if (text) {
+                    var t = new TextRender(fontSize, mX, mY, 0, text, userColor);
+                    canvasState.addText(t);
+                    t.draw(ctx);
+                }
             }
                 break;
             case ModeEnums.SELECT: {
