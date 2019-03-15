@@ -15,19 +15,25 @@
 
 
 .canvas-bg{
-  background:url('https://cdn.hyperdev.com/feca3b9d-2ddb-43ff-98fa-57abfe77506b%2Fbg.png') repeat #e4e4e4;
+  background:url('../images/bank/bank-0.jpg');
 }
 
 .user-canvas{
     position: absolute; left: 0; top: 0;
     overflow: hidden;
-    z-index: 1;
+    z-index: 2;
 }
 
 .peer-canvas {
     position: absolute; left: 0; top: 0;
     overflow:hidden;
-    z-index: 0;
+    z-index: 1;
+}
+
+.bg-canvas {
+  position: absolute; left: 0; top: 0;
+  overflow:hidden;
+  z-index: 0;
 }
 
 body{

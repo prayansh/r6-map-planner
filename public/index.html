@@ -24,12 +24,16 @@
     <div id="main_tools_fulcrum" class="input-group-prepend">
         <div id="fulcrum_div" class="input-group-text"></div>
     </div>
-    <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="First group">
+    <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="Draw tools">
         <button id="move_tool" type="button" class="radio btn btn-secondary active">Move</button>
         <button id="pen_tool" type="button" class="radio btn btn-secondary">Pen</button>
         <button id="text_tool" type="button" class="radio btn btn-secondary">Text</button>
         <button id="shape_tool" type="button" class="radio btn btn-secondary">Shape</button>
         <button id="erase_tool" type="button" class="btn btn-secondary">Erase</button>
+    </div>
+    <div id="floor_buttons" class="btn-group mr-2" role="group" aria-label="Floor Tools">
+        <button id="floor_up_btn" type="button" class="btn btn-secondary">&#8593;</button>
+        <button id="floor_down_btn" type="button" class="btn btn-secondary">&#8595;</button>
     </div>
     <div id="text_tools" class="input-group invisible">
         <div class="input-group-prepend">
@@ -51,9 +55,10 @@
     <canvas id="paper" width="1900" height="1000" class="user-canvas">
         Your browser needs to support canvas for this to work!
     </canvas>
-    <canvas id="collab" width="1900" height="1000" class="canvas-bg peer-canvas">
+    <canvas id="collab" width="1900" height="1000" class="peer-canvas">
         Your browser needs to support canvas for this to work!
     </canvas>
+    <img id="bg" width="1900" height="1000" class="bg-canvas"/>
 </div>
 
 <!-- JavaScript includes. Notice that socket.io.js is served by node.js -->

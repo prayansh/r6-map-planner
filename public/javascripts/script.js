@@ -10,7 +10,7 @@ $(function () {
         canvas = $('#paper'),
         collab = $('#collab'),
         ctx = canvas[0].getContext('2d'),
-        ctxOther = collab[0].getContext('2d')
+        peerCtx = collab[0].getContext('2d')
     ;
 
     // Generate an unique ID
@@ -56,18 +56,18 @@ $(function () {
     });
 
     function redrawPeerCanvas() {
-        ctxOther.clearRect(0, 0, collab[0].width, collab[0].height);
+        peerCtx.clearRect(0, 0, collab[0].width, collab[0].height);
         Object.keys(clients).forEach(function (id) {
             var data = clients[id].canvasState;
             var clientColor = clients[id].color;
             data.pathList.forEach(function (path) {
                 var p = new PathRender(0, 0, clientColor);
                 p.pointsNotDrawn = path.points;
-                p.draw(ctxOther);
+                p.draw(peerCtx);
             });
             data.textList.forEach(function (text) {
                 var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
-                t.draw(ctxOther);
+                t.draw(peerCtx);
             });
         });
     }
