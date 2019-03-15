@@ -36,7 +36,7 @@ function TextRender(fontSize, x, y, rot, text, fill) {
 
 TextRender.prototype.draw = function (ctx) {
     ctx.save();
-    ctx.font = this.fontSize + 'px serif';
+    ctx.font = this.fontSize + 'px Verdana';
     this.width = ctx.measureText(this.text).width;
     this.height = this.fontSize;
     ctx.fillStyle = this.fill;
@@ -55,7 +55,7 @@ TextRender.prototype.contains = function (mx, my) {
 
 TextRender.prototype.stroke = function (ctx, strokeStyle, strokeWidth) {
     ctx.save();
-    ctx.font = this.fontSize + 'px serif';
+    ctx.font = this.fontSize + 'px Verdana';
     this.width = ctx.measureText(this.text).width;
     this.height = this.fontSize;
     ctx.strokeStyle = strokeStyle;
