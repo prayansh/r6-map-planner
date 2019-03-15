@@ -49,6 +49,27 @@ $(function () {
         }
     });
 
+    document.addEventListener('keydown', function (event) {
+        if (mode !== ModeEnums.TEXT) {
+            // Do something with the captured event.keyCode
+            console.log(event.keyCode);
+            console.log(event.code);
+            if (event.code === 'KeyQ') { // Q
+                $("#move_tool").trigger("click");
+            } else if (event.code === 'KeyW') { // W
+                $("#pen_tool").trigger("click");
+            } else if (event.code === 'KeyE') { // E
+                $("#text_tool").trigger("click");
+            } else if (event.code === 'Backspace') { // Backspace
+                $("#erase_tool").trigger("click");
+            } else if (event.code === 'KeyZ') { // Z
+                // move toolbar to mouse coordinates
+                $("#main_tools").css({top: prev.y, left: prev.x, position:'absolute'});
+            }
+        }
+        return false;
+    }, false);
+
     socket.on('init', function (initData) {
         // id = initData.id;
         userColor = initData.color;
@@ -236,9 +257,10 @@ $(function () {
                     }
                     break;
             }
-            prev.x = e.pageX;
-            prev.y = e.pageY;
+
         }
+        prev.x = e.pageX;
+        prev.y = e.pageY;
     });
 
     // Remove inactive clients after 10 seconds of inactivity
