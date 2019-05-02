@@ -35,6 +35,9 @@
         <button id="floor_up_btn" type="button" class="btn btn-secondary">&#8593;</button>
         <button id="floor_down_btn" type="button" class="btn btn-secondary">&#8595;</button>
     </div>
+    <div class="btn-group mr-2" role="group" aria-label="Zoom Tool">
+        <input id="zoom_control" type="range" class="form-control-range" id="zoomControl">
+    </div>
     <div id="text_tools" class="input-group invisible">
         <div class="input-group-prepend">
             <div class="input-group-text" id="text_label">T</div>
@@ -51,21 +54,25 @@
     </div>
 </div>
 
-<div>
-    <canvas id="paper" width="2560" height="1440" class="user-canvas">
-        Your browser needs to support canvas for this to work!
-    </canvas>
-    <canvas id="collab" width="2560" height="1440" class="peer-canvas">
-        Your browser needs to support canvas for this to work!
-    </canvas>
-    <img id="bg" width="2560" height="1440" class="bg-canvas"/>
+<div id="main_screen" >
+    <div class="panzoom">
+        <canvas id="paper" class="user-canvas">
+            Your browser needs to support canvas for this to work!
+        </canvas>
+        <canvas id="collab" class="peer-canvas">
+            Your browser needs to support canvas for this to work!
+        </canvas>
+        <img id="bg" class="bg-canvas" src="images/bank/bank-0.jpg"/>
+    </div>
 </div>
 
 <!-- JavaScript includes. Notice that socket.io.js is served by node.js -->
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.panzoom/2.0.6/jquery.panzoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.7.8/js/jquery.mmenu.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.7.8/addons/rtl/jquery.mmenu.rtl.min.js"></script>
 <script src="javascripts/Renders.js"></script>
 <script src="javascripts/script.js"></script>
 <script src="javascripts/ui.js"></script>

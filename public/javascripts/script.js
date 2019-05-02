@@ -7,11 +7,35 @@ $(function () {
 
     var doc = $(document),
         win = $(window),
-        canvas = $('#paper'),
-        collab = $('#collab'),
-        ctx = canvas[0].getContext('2d'),
-        peerCtx = collab[0].getContext('2d')
+        $canvas = $('#paper'),
+        $collab = $('#collab'),
+        $bg = $('#bg'),
+        ctx = $canvas[0].getContext('2d'),
+        peerCtx = $collab[0].getContext('2d'),
+        $mainScreen = $('#main_screen'),
+        $panZoomElem = $mainScreen.find('.panzoom'),
+        $zoomControl = $('#zoom_control')
     ;
+
+    ctx.canvas.height = $mainScreen.height();
+    ctx.canvas.width = $mainScreen.width();
+    peerCtx.canvas.height = $mainScreen.height();
+    peerCtx.canvas.width = $mainScreen.width();
+    $bg.height($mainScreen.height());
+    $bg.width($mainScreen.width());
+
+    $panZoomElem.panzoom({
+        $zoomRange: $zoomControl,
+        minScale: 1,
+        maxScale: 2.5,
+        increment: 0.2,
+        contain: 'invert',
+        disablePan: false
+    });
+    $panZoomElem.on('mousewheel', function(event) {
+        $zoomControl.val(+$zoomControl.val() + (event.deltaY * 0.06));
+        $zoomControl.trigger('input');
+    });
 
     // Generate an unique ID
     var id = Math.round($.now() * Math.random());
@@ -26,19 +50,27 @@ $(function () {
     var userColor = '#fff';
     var ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, SHAPE: 4};
     var mode = ModeEnums.SELECT;
-    var canvasState = new CanvasState(canvas[0]);
+    var canvasState = new CanvasState($canvas[0]);
+
+    function disablePanning(b) {
+        $panZoomElem.panzoom("option", "disablePan", b);
+    }
 
     $('#pen_tool').click(function (_) {
         mode = ModeEnums.PEN;
+        disablePanning(true);
     });
     $('#move_tool').click(function (_) {
         mode = ModeEnums.SELECT;
+        disablePanning(false);
     });
     $('#text_tool').click(function (_) {
         mode = ModeEnums.TEXT;
+        disablePanning(true);
     });
     $('#shape_tool').click(function (_) {
         mode = ModeEnums.SHAPE;
+        disablePanning(true);
     });
     $('#erase_tool').click(function (_) {
         // delete selected object from canvas
@@ -77,7 +109,7 @@ $(function () {
     });
 
     function redrawPeerCanvas() {
-        peerCtx.clearRect(0, 0, collab[0].width, collab[0].height);
+        peerCtx.clearRect(0, 0, $collab[0].width, $collab[0].height);
         Object.keys(clients).forEach(function (id) {
             var data = clients[id].canvasState;
             var clientColor = clients[id].color;
@@ -119,7 +151,7 @@ $(function () {
         y: 100
     };
 
-    canvas.on('mousedown', function (e) {
+    $mainScreen.on('mousedown', function (e) {
         e.preventDefault();
         var mX = e.pageX;
         var mY = e.pageY;
