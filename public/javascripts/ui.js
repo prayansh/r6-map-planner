@@ -11,23 +11,6 @@ $('#text_tool').click(function (_) {
     $('#text_tools').removeClass("invisible");
 });
 
-(function () {
-    let floorVal = 0;
-    $("#bg").attr("src", "../images/bank/bank-" + floorVal + ".jpg");
-    $('#floor_up_btn').click(function (_) {
-        if (floorVal < 3) {
-            floorVal = floorVal + 1;
-            $("#bg").attr("src", "../images/bank/bank-" + floorVal + ".jpg");
-        }
-    });
-    $('#floor_down_btn').click(function (_) {
-        if (floorVal > 0) {
-            floorVal = floorVal - 1;
-            $("#bg").attr("src", "../images/bank/bank-" + floorVal + ".jpg");
-        }
-    });
-})();
-
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (document.getElementById(elmnt.id + "_fulcrum")) {

@@ -7,8 +7,9 @@ $(function () {
 
     var doc = $(document),
         win = $(window),
-        canvas = $('#paper'),
-        collab = $('#collab'),
+        $mainMap = $('#main_map'),
+        canvas = $('#paper_basement'),
+        collab = $('#collab_basement'),
         ctx = canvas[0].getContext('2d'),
         peerCtx = collab[0].getContext('2d')
     ;
@@ -94,7 +95,7 @@ $(function () {
     }
 
     // Receive data from other clients
-    socket.on('moving', function (data) {
+    $mainMap.on('moving', function (data) {
 
         if (!(data.id in clients)) {
             // a new user has come online. create a cursor for them
@@ -119,7 +120,7 @@ $(function () {
         y: 100
     };
 
-    canvas.on('mousedown', function (e) {
+    $mainMap.on('mousedown', function (e) {
         e.preventDefault();
         var mX = e.pageX;
         var mY = e.pageY;

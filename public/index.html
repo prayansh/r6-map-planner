@@ -51,14 +51,8 @@
     </div>
 </div>
 
-<div>
-    <canvas id="paper" width="2560" height="1440" class="user-canvas">
-        Your browser needs to support canvas for this to work!
-    </canvas>
-    <canvas id="collab" width="2560" height="1440" class="peer-canvas">
-        Your browser needs to support canvas for this to work!
-    </canvas>
-    <img id="bg" width="2560" height="1440" class="bg-canvas"/>
+<div id="main_map">
+    <!--Populated via JS-->
 </div>
 
 <!-- JavaScript includes. Notice that socket.io.js is served by node.js -->
@@ -66,9 +60,11 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
+<script src="javascripts/data.js"></script>
 <script src="javascripts/Renders.js"></script>
 <script src="javascripts/script.js"></script>
 <script src="javascripts/ui.js"></script>
+<script src="javascripts/main-render.js"></script>
 <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
