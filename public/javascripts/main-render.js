@@ -16,27 +16,28 @@ function setupMap(name) {
     var mFloors = mData.floors;
     if (mFloors) {
         var html;
-        Object.keys(mFloors).forEach(function (key, i) {
-            var obj = mFloors[key];
+        Object.keys(mFloors).forEach(function (key) {
+            let obj = mFloors[key];
+            let i = mFloors[key].floorNum;
             html = '';
             html += `<div id="floor_${i}" class="floor-wrapper">`;
-            html += `<canvas id="paper_${key}" width="2560" height="1440" class="user-canvas">`;
+            html += `<canvas id="paper_${i}" width="${SCREEN_WIDTH}" height="${SCREEN_HEIGHT}" class="user-canvas">`;
             // html += '        Your browser needs to support canvas for this to work!';
             html += '</canvas>';
-            html += `<canvas id="collab_${key}" width="2560" height="1440" class="peer-canvas">`;
+            html += `<canvas id="collab_${i}" width="${SCREEN_WIDTH}" height="${SCREEN_HEIGHT}" class="peer-canvas">`;
             // html += '        Your browser needs to support canvas for this to work!';
             html += '</canvas>';
-            html += `<img id="bg_${key}" src="images/${obj.img}" width="2560" height="1440" class="bg-canvas"/>`;
+            html += `<img id="bg_${i}" src="images/${obj.img}" width="${SCREEN_WIDTH}" height="${SCREEN_HEIGHT}" class="bg-canvas"/>`;
             html += '</div>'; // end floor-wrapper
             $mainScreen.append(html);
         });
     }
     $('.user-canvas').each(function (i, obj) {
         const id = obj.id.split('_')[1];
-        const uCanvas = $(`#paper_${id}`)[0].getContext('2d');
+        const userCanvas = $(`#paper_${id}`)[0];
+        const uCanvas = userCanvas.getContext('2d');
         const pCanvas = $(`#collab_${id}`)[0].getContext('2d');
-        let mLayer = new MapLayer(i, uCanvas, pCanvas);
-        canvases.push(mLayer);
+        mapLayers[id] = new MapLayer(id, uCanvas, pCanvas, userCanvas);
     });
 }
 
@@ -49,9 +50,10 @@ function showFloor(numFloors, floor) {
             $(`#floor_${i}`).hide();
         }
     }
-    canvases.forEach(function(obj) {
-        if (obj.floorNum === floor) {
-            currentCanvasCtx = obj.userContext;
+    Object.keys(mapLayers).forEach(function(i) {
+        let layer = mapLayers[i];
+        if (parseInt(layer.floorNum) === floor) {
+            currentLayer = layer;
         }
     });
 }

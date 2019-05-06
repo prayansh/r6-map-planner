@@ -7,11 +7,7 @@ $(function () {
 
     var doc = $(document),
         win = $(window),
-        $mainMap = $('#main_map'),
-        canvas = $('#paper_basement'),
-        collab = $('#collab_basement'),
-        ctx = canvas[0].getContext('2d'),
-        peerCtx = collab[0].getContext('2d')
+        $mainMap = $('#main_map')
     ;
 
     // Generate an unique ID
@@ -27,7 +23,6 @@ $(function () {
     var userColor = '#fff';
     var ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, SHAPE: 4};
     var mode = ModeEnums.SELECT;
-    var canvasState = new CanvasState(canvas[0]);
 
     $('#pen_tool').click(function (_) {
         mode = ModeEnums.PEN;
@@ -43,10 +38,10 @@ $(function () {
     });
     $('#erase_tool').click(function (_) {
         // delete selected object from canvas
-        if (canvasState.selection) {
-            canvasState.remove(canvasState.selection);
-            canvasState.invalidate();
-            canvasState.deselect();
+        if (currentLayer.canvasState.selection) {
+            currentLayer.canvasState.remove(currentLayer.canvasState.selection);
+            currentLayer.canvasState.invalidate();
+            currentLayer.canvasState.deselect();
         }
     });
 
@@ -78,18 +73,23 @@ $(function () {
     });
 
     function redrawPeerCanvas() {
-        peerCtx.clearRect(0, 0, collab[0].width, collab[0].height);
+        // Clear All Peer Canvases
+        mapLayers.forEach(function(layer){
+            layer.peerContext.clearRect(0, 0, 2560, 1440);
+        });
         Object.keys(clients).forEach(function (id) {
-            var data = clients[id].canvasState;
-            var clientColor = clients[id].color;
-            data.pathList.forEach(function (path) {
-                var p = new PathRender(0, 0, clientColor);
-                p.pointsNotDrawn = path.points;
-                p.draw(peerCtx);
-            });
-            data.textList.forEach(function (text) {
-                var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
-                t.draw(peerCtx);
+            var data = clients[id].layerData;
+            Object.keys(data).forEach(function(floorNum){
+                var clientColor = clients[id].color;
+                data.pathList.forEach(function (path) {
+                    var p = new PathRender(0, 0, clientColor);
+                    p.pointsNotDrawn = path.points;
+                    p.draw(mapLayers[floorNum].peerContext);
+                });
+                data.textList.forEach(function (text) {
+                    var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
+                    t.draw(mapLayers[floorNum].peerContext);
+                });
             });
         });
     }
@@ -128,7 +128,7 @@ $(function () {
         switch (mode) {
             case ModeEnums.PEN: {
                 var p = new PathRender(mX, mY, userColor);
-                canvasState.addPath(p);
+                currentLayer.canvasState.addPath(p);
             }
                 break;
             case ModeEnums.SHAPE: {
@@ -140,8 +140,8 @@ $(function () {
                 const text = $("#text_tool_data").val();
                 if (text) {
                     var t = new TextRender(fontSize, mX, mY, 0, text, userColor);
-                    canvasState.addText(t);
-                    t.draw(ctx);
+                    currentLayer.canvasState.addText(t);
+                    t.draw(currentLayer.userContext);
                 }
             }
                 break;
@@ -149,36 +149,36 @@ $(function () {
                 console.log("(" + mX + ", " + mY + ")");
                 var newSelected = false;
                 // Check for path selection
-                canvasState.pathList.forEach(function (p) {
+                currentLayer.canvasState.pathList.forEach(function (p) {
                     if (p.contains(mX, mY)) {
                         var mySel = p;
                         // Keep track of where in the object we clicked
                         // so we can move it smoothly (see mousemove)
-                        canvasState.dragStartX = mX;
-                        canvasState.dragStartY = mY;
-                        canvasState.dragging = true;
-                        canvasState.selection = mySel;
-                        canvasState.valid = false;
+                        currentLayer.canvasState.dragStartX = mX;
+                        currentLayer.canvasState.dragStartY = mY;
+                        currentLayer.canvasState.dragging = true;
+                        currentLayer.canvasState.selection = mySel;
+                        currentLayer.canvasState.valid = false;
                         newSelected = true;
                     }
                 });
                 if (!newSelected) { // Check for text selection
-                    canvasState.textList.forEach(function (t) {
+                    currentLayer.canvasState.textList.forEach(function (t) {
                         if (t.contains(mX, mY)) {
                             var mySel = t;
                             // Keep track of where in the object we clicked
                             // so we can move it smoothly (see mousemove)
-                            canvasState.dragStartX = mX;
-                            canvasState.dragStartY = mY;
-                            canvasState.dragging = true;
-                            canvasState.selection = mySel;
-                            canvasState.valid = false;
+                            currentLayer.canvasState.dragStartX = mX;
+                            currentLayer.canvasState.dragStartY = mY;
+                            currentLayer.canvasState.dragging = true;
+                            currentLayer.canvasState.selection = mySel;
+                            currentLayer.canvasState.valid = false;
                             newSelected = true;
                         }
                     });
                 }
-                if (!newSelected && canvasState.selection) {
-                    canvasState.deselect()
+                if (!newSelected && currentLayer.canvasState.selection) {
+                    currentLayer.canvasState.deselect()
                 }
             }
                 break;
@@ -188,12 +188,12 @@ $(function () {
 
     doc.bind('mouseup mouseleave', function () {
         mouseDown = false;
-        canvasState.dragging = false;
+        currentLayer.canvasState.dragging = false;
     });
 
     var lastEmit = $.now();
 
-    function toDataObject(canvasState) {
+    function canvasStateToData(canvasState) {
         var data = {};
         data.pathList = [];
         canvasState.pathList.forEach(function (path) {
@@ -210,8 +210,17 @@ $(function () {
             t.text = text.text;
             data.textList.push(t);
         });
-        console.log("Sending: " + JSON.stringify(data));
         return data;
+    }
+
+    function layerToData(mapLayers) {
+        var dataObj = {};
+        Object.keys(mapLayers).forEach(function(i){
+            let layer = mapLayers[i];
+            dataObj[layer.floorNum] = canvasStateToData(layer.canvasState);
+        });
+        console.log("Sending: " + JSON.stringify(dataObj));
+        return dataObj;
     }
 
     doc.on('mousemove', function (e) {
@@ -219,13 +228,13 @@ $(function () {
         var mX = e.pageX;
         var mY = e.pageY;
         if ($.now() - lastEmit > 60) {
+            // Prototype for User Data
             socket.emit('mousemove', {
                 'x': e.pageX,
                 'y': e.pageY,
                 'id': id,
                 'color': userColor,
-                'canvasState': toDataObject(canvasState),
-                // 'mouseDown': mouseDown,
+                'layerData': layerToData(mapLayers),
             });
             lastEmit = $.now();
         }
@@ -236,25 +245,25 @@ $(function () {
         if (mouseDown) {
             switch (mode) {
                 case ModeEnums.PEN:
-                    var p = canvasState.pathList[canvasState.pathList.length - 1];
+                    var p = currentLayer.canvasState.pathList[currentLayer.canvasState.pathList.length - 1];
                     p.addPoint(e.pageX, e.pageY);
-                    p.draw(ctx);
+                    p.draw(currentLayer.userContext);
                     break;
                 case ModeEnums.SHAPE:
                     break;
                 case ModeEnums.TEXT:
                     break;
                 case ModeEnums.SELECT:
-                    if (canvasState.dragging) {
+                    if (currentLayer.canvasState.dragging) {
                         // We don't want to drag the object by its top-left corner,
                         // we want to drag from where we clicked.
                         // Thats why we saved the offset and use it here
-                        var dx = mX - canvasState.dragStartX;
-                        var dy = mY - canvasState.dragStartY;
-                        canvasState.dragStartX = mX;
-                        canvasState.dragStartY = mY;
-                        canvasState.selection.displace(dx, dy);
-                        canvasState.invalidate(); // Something's dragging so we must redraw
+                        var dx = mX - currentLayer.canvasState.dragStartX;
+                        var dy = mY - currentLayer.canvasState.dragStartY;
+                        currentLayer.canvasState.dragStartX = mX;
+                        currentLayer.canvasState.dragStartY = mY;
+                        currentLayer.canvasState.selection.displace(dx, dy);
+                        currentLayer.canvasState.invalidate(); // Something's dragging so we must redraw
                     }
                     break;
             }
@@ -281,6 +290,6 @@ $(function () {
 
     // Redraw check
     setInterval(function () {
-        canvasState.draw(ctx); // check for invalidation here
+        currentLayer.canvasState.draw(currentLayer.userContext); // check for invalidation here
     }, 30);  //maybe longer interval???
 });

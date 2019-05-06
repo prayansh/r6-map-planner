@@ -159,88 +159,90 @@ PathRender.prototype.stroke = function (ctx, strokeStyle, strokeWidth) {
 
 
 // ==================== Canvas State
-function CanvasState(canvas) {
-    this.pathList = [];
-    this.iconList = [];
-    this.textList = [];
-    this.valid = true; // when set to false, redraw everything
-    this.dragging = false; // Keep track of when we are dragging
-    this.dragStartX = 0;
-    this.dragStartY = 0;
-    this.selection = null;
-    this.canvas = canvas;
+class CanvasState {
+    constructor(canvas) {
+        this.pathList = [];
+        this.iconList = [];
+        this.textList = [];
+        this.valid = true; // when set to false, redraw everything
+        this.dragging = false; // Keep track of when we are dragging
+        this.dragStartX = 0;
+        this.dragStartY = 0;
+        this.selection = null;
+        this.canvas = canvas;
+    }
+
+    forceDraw(ctx) {
+        // draw all renders
+        this.pathList.forEach(function (p) {
+            p.invalidate();
+            p.draw(ctx);
+        });
+        this.textList.forEach(function (t) {
+            t.draw(ctx);
+        });
+    };
+
+    draw(ctx) {
+        // TODO redraw
+        if (!this.valid) {
+            this.clear(ctx);
+            this.forceDraw(ctx);
+
+            // draw selection
+            // right now this is just a stroke along the edge of the selected Shape
+            if (this.selection != null) {
+                var selectionColor = '#CC0000';
+                var selectionWidth = 2;
+                this.selection.stroke(ctx, selectionColor, selectionWidth);
+            }
+
+            // ** Add stuff you want drawn on top all the time here **
+            this.valid = true;
+        }
+    };
+
+    clear(ctx) {
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    };
+
+    invalidate() {
+        this.valid = false;
+    };
+
+    addPath(path) {
+        this.pathList.push(path);
+    };
+
+    addIcon(icon) {
+        this.iconList.push(icon);
+    };
+
+    addShape(shape) {
+        this.iconList.push(shape);
+    };
+
+    addText(text) {
+        this.textList.push(text);
+    };
+
+    deselect() {
+        this.selection = null;
+        this.valid = false; // Need to clear the old selection border
+    };
+
+    remove(obj) {
+        var list;
+        if (obj instanceof PathRender) {
+            list = this.pathList;
+        } else if (obj instanceof TextRender) {
+            list = this.textList;
+        }
+        for (var i = 0; i < list.length; i++) {
+            if (list[i] === obj) {
+                list.splice(i, 1);
+                break;
+            }
+        }
+    };
 }
-
-CanvasState.prototype.forceDraw = function (ctx) {
-    // draw all renders
-    this.pathList.forEach(function (p) {
-        p.invalidate();
-        p.draw(ctx);
-    });
-    this.textList.forEach(function (t) {
-        t.draw(ctx);
-    });
-};
-
-CanvasState.prototype.draw = function (ctx) {
-    // TODO redraw
-    if (!this.valid) {
-        this.clear(ctx);
-        this.forceDraw(ctx);
-
-        // draw selection
-        // right now this is just a stroke along the edge of the selected Shape
-        if (this.selection != null) {
-            var selectionColor = '#CC0000';
-            var selectionWidth = 2;
-            this.selection.stroke(ctx, selectionColor, selectionWidth);
-        }
-
-        // ** Add stuff you want drawn on top all the time here **
-        this.valid = true;
-    }
-};
-
-CanvasState.prototype.clear = function (ctx) {
-    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-};
-
-CanvasState.prototype.invalidate = function () {
-    this.valid = false;
-};
-
-CanvasState.prototype.addPath = function (path) {
-    this.pathList.push(path);
-};
-
-CanvasState.prototype.addIcon = function (icon) {
-    this.iconList.push(icon);
-};
-
-CanvasState.prototype.addShape = function (shape) {
-    this.iconList.push(shape);
-};
-
-CanvasState.prototype.addText = function (text) {
-    this.textList.push(text);
-};
-
-CanvasState.prototype.deselect = function () {
-    this.selection = null;
-    this.valid = false; // Need to clear the old selection border
-};
-
-CanvasState.prototype.remove = function (obj) {
-    var list;
-    if (obj instanceof PathRender) {
-        list = this.pathList;
-    } else if (obj instanceof TextRender) {
-        list = this.textList;
-    }
-    for (var i = 0; i < list.length; i++) {
-        if (list[i] === obj) {
-            list.splice(i, 1);
-            break;
-        }
-    }
-};

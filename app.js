@@ -50,6 +50,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('mousemove', function (data) {
         // This line sends the event (broadcasts it)
         // to everyone except the originating client.
+        console.log('emitting');
         socket.broadcast.emit('moving', data);
     });
 });
