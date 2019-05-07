@@ -48,8 +48,7 @@ $(function () {
     document.addEventListener('keydown', function (event) {
         if (mode !== ModeEnums.TEXT) {
             // Do something with the captured event.keyCode
-            console.log(event.keyCode);
-            console.log(event.code);
+            logger.debug(`keyCode: ${event.keyCode}, code: ${event.code}`);
             if (event.code === 'KeyQ') { // Q
                 $("#move_tool").trigger("click");
             } else if (event.code === 'KeyW') { // W
@@ -97,7 +96,7 @@ $(function () {
 
     // Receive data from other clients
     socket.on('moving', function (data) {
-        console.log("Received: " + JSON.stringify(data));
+        logger.debug("Received: ", data);
 
         if (!(data.id in clients)) {
             // a new user has come online. create a cursor for them
@@ -147,7 +146,7 @@ $(function () {
             }
                 break;
             case ModeEnums.SELECT: {
-                console.log("(" + mX + ", " + mY + ")");
+                logger.debug(`(${mX}, ${mY})`);
                 var newSelected = false;
                 // Check for path selection
                 currentLayer.canvasState.pathList.forEach(function (p) {
@@ -220,7 +219,7 @@ $(function () {
             let layer = mapLayers[i];
             dataObj[layer.floorNum] = canvasStateToData(layer.canvasState);
         });
-        console.log("Sending: " + JSON.stringify(dataObj));
+        logger.debug("Sending: ", dataObj);
         return dataObj;
     }
 

@@ -2,8 +2,6 @@
  * Everything Related to Rendering the initial map
  */
 
-
-
 (function () {
     var name = "BANK";
     setupMap(name);
@@ -42,7 +40,7 @@ function setupMap(name) {
 }
 
 function showFloor(numFloors, floor) {
-    console.log(`Showing floor: ${floor}`);
+    logger.info(`Showing floor: ${floor}`);
     for (var i = 0; i < numFloors; i++) {
         if (i === floor) {
             $(`#floor_${i}`).show();
