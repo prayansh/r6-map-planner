@@ -74,19 +74,20 @@ $(function () {
 
     function redrawPeerCanvas() {
         // Clear All Peer Canvases
-        mapLayers.forEach(function(layer){
-            layer.peerContext.clearRect(0, 0, 2560, 1440);
+        Object.keys(mapLayers).forEach(function(key){
+            mapLayers[key].peerContext.clearRect(0, 0, 2560, 1440);
         });
         Object.keys(clients).forEach(function (id) {
-            var data = clients[id].layerData;
+            let data = clients[id].layerData;
             Object.keys(data).forEach(function(floorNum){
-                var clientColor = clients[id].color;
-                data.pathList.forEach(function (path) {
+                const clientColor = clients[id].color;
+                let canvasState = data[floorNum];
+                canvasState.pathList.forEach(function (path) {
                     var p = new PathRender(0, 0, clientColor);
                     p.pointsNotDrawn = path.points;
                     p.draw(mapLayers[floorNum].peerContext);
                 });
-                data.textList.forEach(function (text) {
+                canvasState.textList.forEach(function (text) {
                     var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
                     t.draw(mapLayers[floorNum].peerContext);
                 });
@@ -95,7 +96,8 @@ $(function () {
     }
 
     // Receive data from other clients
-    $mainMap.on('moving', function (data) {
+    socket.on('moving', function (data) {
+        console.log("Received: " + JSON.stringify(data));
 
         if (!(data.id in clients)) {
             // a new user has come online. create a cursor for them
@@ -110,7 +112,6 @@ $(function () {
 
         // Saving the current client state
         clients[data.id] = data;
-        console.log("Received: " + JSON.stringify(data));
         clients[data.id].updated = $.now();
         redrawPeerCanvas();
     });

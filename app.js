@@ -51,6 +51,7 @@ io.sockets.on('connection', function (socket) {
         // This line sends the event (broadcasts it)
         // to everyone except the originating client.
         console.log('emitting');
+        console.log(JSON.stringify(data));
         socket.broadcast.emit('moving', data);
     });
 });
