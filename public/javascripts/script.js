@@ -60,6 +60,12 @@ $(function () {
             } else if (event.code === 'KeyZ') { // Z
                 // move toolbar to mouse coordinates
                 $("#main_tools").css({top: prev.y, left: prev.x, position:'absolute'});
+            } else if (event.code === 'KeyJ') { // Z
+                // move toolbar to mouse coordinates
+                $("#floor_down_btn").trigger("click");
+            } else if (event.code === 'KeyK') { // Z
+                // move toolbar to mouse coordinates
+                $("#floor_up_btn").trigger("click");
             }
         }
         return false;
