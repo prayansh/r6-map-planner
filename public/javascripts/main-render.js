@@ -3,7 +3,7 @@
  */
 
 (function () {
-    var name = "BANK";
+    var name = "CLUBHOUSE";
     setupMap(name);
     setupFloorKeys(name);
 })();
