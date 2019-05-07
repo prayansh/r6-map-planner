@@ -93,6 +93,7 @@ PathRender.prototype.draw = function (ctx) {
     while (this.pointsNotDrawn.length !== 0) {
         var p = this.pointsNotDrawn.shift();
         ctx.beginPath();
+        ctx.lineWidth = 3;
         ctx.strokeStyle = this.fill;
         ctx.moveTo(p.frX, p.frY);
         ctx.lineTo(p.tX, p.tY);

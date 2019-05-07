@@ -128,8 +128,8 @@ $(function () {
 
     $mainMap.on('mousedown', function (e) {
         e.preventDefault();
-        var mX = e.pageX;
-        var mY = e.pageY;
+        var mX = e.pageX - $mainMap.offset().left;
+        var mY = e.pageY - $mainMap.offset().top;
         mouseDown = true;
         switch (mode) {
             case ModeEnums.PEN: {
