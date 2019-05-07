@@ -3,6 +3,7 @@ dragElement(document.getElementById("main_tools"));
 // Make buttons appear active in Main Toolbar
 $('#main_tools .radio').click(function (_) {
     $('#text_tools').addClass("invisible");
+    $('#opPanel').addClass("invisible");
     $(this).siblings().removeClass("active");
     $(this).addClass("active");
 });
@@ -10,6 +11,20 @@ $('#main_tools .radio').click(function (_) {
 $('#text_tool').click(function (_) {
     $('#text_tools').removeClass("invisible");
 });
+
+$('#operator_tool').click(function (_) {
+    $('#opPanel').removeClass("invisible");
+});
+
+// Setup Operator Icons
+$("#opInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    logger.debug(`filtering for:${value}`);
+    $("#iconList li").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+});
+// End Setup Operator Icons
 
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;

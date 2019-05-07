@@ -6,6 +6,7 @@
     var name = "CLUBHOUSE";
     setupMap(name);
     setupFloorKeys(name);
+    setupOperatorIcons();
 })();
 
 function setupMap(name) {
@@ -48,7 +49,7 @@ function showFloor(numFloors, floor) {
             $(`#floor_${i}`).hide();
         }
     }
-    Object.keys(mapLayers).forEach(function(i) {
+    Object.keys(mapLayers).forEach(function (i) {
         let layer = mapLayers[i];
         if (parseInt(layer.floorNum) === floor) {
             currentLayer = layer;
@@ -68,5 +69,31 @@ function setupFloorKeys(name) {
         floor = Math.max(0, floor - 1);
         showFloor(length, floor);
     });
-};
+}
+
+function setupOperatorIcons() {
+    let html = '';
+    const $list = $('#iconList');
+    const size = 48;
+    OP_LIST.forEach(function (op) {
+        const opName = capitalizeFirstLetter(op);
+        html = '';
+        html += `<li class="icon-list-item">`;
+        html += `<img src="images/operator/${op}.svg" height="${size}px" width="${size}px">`;
+        html += `${opName}`;
+        html += `</li>`;
+        $list.append(html);
+    });
+
+    $('#iconList .icon-list-item').click(function(_) {
+        $that = $(this);
+        logger.info(`${$that.value}`);
+        $that.parent().find('li').removeClass('active');
+        $that.addClass('active');
+    });
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 

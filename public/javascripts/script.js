@@ -21,7 +21,7 @@ $(function () {
 
     var socket = io();
     var userColor = '#fff';
-    var ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, SHAPE: 4};
+    var ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, OPERATOR: 4, GADGET: 5};
     var mode = ModeEnums.SELECT;
 
     $('#pen_tool').click(function (_) {
@@ -33,8 +33,8 @@ $(function () {
     $('#text_tool').click(function (_) {
         mode = ModeEnums.TEXT;
     });
-    $('#shape_tool').click(function (_) {
-        mode = ModeEnums.SHAPE;
+    $('#operator_tool').click(function (_) {
+        mode = ModeEnums.OPERATOR;
     });
     $('#erase_tool').click(function (_) {
         // delete selected object from canvas
@@ -137,8 +137,11 @@ $(function () {
                 currentLayer.canvasState.addPath(p);
             }
                 break;
-            case ModeEnums.SHAPE: {
-
+            case ModeEnums.OPERATOR: {
+                const activeIcon = $('#iconList').find('.active');
+                let img = activeIcon.find('img')[0];
+                currentLayer.userContext.imageSmoothingEnabled = false;
+                currentLayer.userContext.drawImage(img, mX, mY, 32, 32);
             }
                 break;
             case ModeEnums.TEXT: {
@@ -255,7 +258,7 @@ $(function () {
                     p.addPoint(e.pageX, e.pageY);
                     p.draw(currentLayer.userContext);
                     break;
-                case ModeEnums.SHAPE:
+                case ModeEnums.OPERATOR:
                     break;
                 case ModeEnums.TEXT:
                     break;

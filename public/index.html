@@ -19,35 +19,48 @@
 <div id="cursors">
     <!-- The mouse pointers will be created here -->
 </div>
-<div id="main_tools" class="tool-panel btn-toolbar mb-3" role="toolbar"
-     aria-label="Toolbar with button groups">
+<div id="main_tools" class="tool-panel">
+
     <div id="main_tools_fulcrum" class="input-group-prepend">
         <div id="fulcrum_div" class="input-group-text"></div>
     </div>
-    <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="Draw tools">
-        <button id="move_tool" type="button" class="radio btn btn-secondary active">Move</button>
-        <button id="pen_tool" type="button" class="radio btn btn-secondary">Pen</button>
-        <button id="text_tool" type="button" class="radio btn btn-secondary">Text</button>
-        <button id="shape_tool" type="button" class="radio btn btn-secondary">Shape</button>
-        <button id="erase_tool" type="button" class="btn btn-secondary">Erase</button>
-    </div>
-    <div id="floor_buttons" class="btn-group mr-2" role="group" aria-label="Floor Tools">
-        <button id="floor_up_btn" type="button" class="btn btn-secondary">&#8593;</button>
-        <button id="floor_down_btn" type="button" class="btn btn-secondary">&#8595;</button>
-    </div>
-    <div id="text_tools" class="input-group invisible">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="text_label">T</div>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="Draw tools">
+            <button id="move_tool" type="button" class="radio btn btn-secondary active">Move
+            </button>
+            <button id="pen_tool" type="button" class="radio btn btn-secondary">Pen</button>
+            <button id="text_tool" type="button" class="radio btn btn-secondary">Text</button>
+            <button id="operator_tool" type="button" class="radio btn btn-secondary">Operator
+            </button>
+            <button id="gadget_tool" type="button" class="radio btn btn-secondary">Gadget</button>
+            <button id="erase_tool" type="button" class="btn btn-secondary">Erase</button>
         </div>
-        <input type="text" class="form-control" placeholder="Text"
-               aria-label="Text Here" aria-describedby="text_label"
-               id="text_tool_data">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="font_label">Size</div>
+        <div id="floor_buttons" class="btn-group mr-2" role="group" aria-label="Floor Tools">
+            <button id="floor_up_btn" type="button" class="btn btn-secondary">&#8593;</button>
+            <button id="floor_down_btn" type="button" class="btn btn-secondary">&#8595;</button>
         </div>
-        <input type="number" class="form-control" value="32"
-               aria-describedby="text_label"
-               min="20" max="96" id="text_tool_size">
+        <div id="text_tools" class="input-group invisible">
+            <div class="input-group-prepend">
+                <div class="input-group-text" id="text_label">T</div>
+            </div>
+            <input type="text" class="form-control" placeholder="Text"
+                   aria-label="Text Here" aria-describedby="text_label"
+                   id="text_tool_data">
+            <div class="input-group-prepend">
+                <div class="input-group-text" id="font_label">Size</div>
+            </div>
+            <input type="number" class="form-control" value="32"
+                   aria-describedby="text_label"
+                   min="20" max="96" id="text_tool_size">
+        </div>
+    </div>
+    <div id="opPanel" class="tool-panel invisible">
+        <input id="opInput" type="text" placeholder="Search by name" class="form-control">
+        <div class="scroll-list">
+            <ul id="iconList" class="list-group">
+                <!--Populated via JS-->
+            </ul>
+        </div>
     </div>
 </div>
 

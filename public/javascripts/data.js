@@ -79,6 +79,65 @@ const MAP_DATA = {
         }
     }
 };
+const OP_LIST = [
+    'alibi',
+    'ash',
+    'bandit',
+    'blackbeard',
+    'blitz',
+    'buck',
+    'capitao',
+    'castle',
+    'caveira',
+    'clash',
+    'doc',
+    'dokkaebi',
+    'echo',
+    'ela',
+    'finka',
+    'frost',
+    'fuze',
+    'glaz',
+    'gridlock',
+    'hibana',
+    'iq',
+    'jackal',
+    'jager',
+    'kaid',
+    'kapkan',
+    'lesion',
+    'lion',
+    'maestro',
+    'maverick',
+    'mira',
+    'montagne',
+    'mozzie',
+    'mute',
+    'nomad',
+    'pulse',
+    'recruit-blue',
+    'recruit-green',
+    'recruit-orange',
+    'recruit-red',
+    'recruit-yellow',
+    'rook',
+    'sledge',
+    'smoke',
+    'tachanka',
+    'thatcher',
+    'thermite',
+    'twitch',
+    'valkyrie',
+    'vigil',
+    'ying',
+    'zofia'
+];
+const GADGET_DATA = {
+    Breach: {
+        name: "Breach Charge",
+        img: ""
+    }
+};
 const SCREEN_WIDTH = 2560;
 const SCREEN_HEIGHT = 1440;
 
