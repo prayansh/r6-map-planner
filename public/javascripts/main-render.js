@@ -79,7 +79,7 @@ function setupOperatorIcons() {
         const opName = capitalizeFirstLetter(op);
         html = '';
         html += `<li class="icon-list-item">`;
-        html += `<img src="images/operator/${op}.svg" height="${size}px" width="${size}px">`;
+        html += `<img id="${op}Icon" src="images/operator/${op}.svg" height="${size}px" width="${size}px">`;
         html += `${opName}`;
         html += `</li>`;
         $list.append(html);

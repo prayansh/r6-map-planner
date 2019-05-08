@@ -96,6 +96,11 @@ $(function () {
                     var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
                     t.draw(mapLayers[floorNum].peerContext);
                 });
+                canvasState.iconList.forEach(function (icon) {
+                    const img = $(`#${icon.imgName}Icon`)[0];
+                    var i = new IconRender(icon.x, icon.y, icon.w, icon.h, img);
+                    i.draw(mapLayers[floorNum].peerContext);
+                });
             });
         });
     }
@@ -140,8 +145,9 @@ $(function () {
             case ModeEnums.OPERATOR: {
                 const activeIcon = $('#iconList').find('.active');
                 let img = activeIcon.find('img')[0];
-                currentLayer.userContext.imageSmoothingEnabled = false;
-                currentLayer.userContext.drawImage(img, mX, mY, 32, 32);
+                let icon = new IconRender(mX, mY, 32, 32, img);
+                currentLayer.canvasState.addIcon(icon);
+                icon.draw(currentLayer.userContext);
             }
                 break;
             case ModeEnums.TEXT: {
@@ -186,6 +192,21 @@ $(function () {
                         }
                     });
                 }
+                if (!newSelected) { // Check for icon selection
+                    currentLayer.canvasState.iconList.forEach(function (i) {
+                        if (i.contains(mX, mY)) {
+                            var mySel = i;
+                            // Keep track of where in the object we clicked
+                            // so we can move it smoothly (see mousemove)
+                            currentLayer.canvasState.dragStartX = mX;
+                            currentLayer.canvasState.dragStartY = mY;
+                            currentLayer.canvasState.dragging = true;
+                            currentLayer.canvasState.selection = mySel;
+                            currentLayer.canvasState.valid = false;
+                            newSelected = true;
+                        }
+                    });
+                }
                 if (!newSelected && currentLayer.canvasState.selection) {
                     currentLayer.canvasState.deselect()
                 }
@@ -218,6 +239,16 @@ $(function () {
             t.fontSize = text.fontSize;
             t.text = text.text;
             data.textList.push(t);
+        });
+        data.iconList = [];
+        canvasState.iconList.forEach(function (icon) {
+            var i = {};
+            i.x = icon.x;
+            i.y = icon.y;
+            i.w = icon.w;
+            i.h = icon.h;
+            i.imgName = icon.img.id.substring(0, icon.img.id.indexOf('Icon'));
+            data.iconList.push(i);
         });
         return data;
     }

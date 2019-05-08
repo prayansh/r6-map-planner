@@ -24,6 +24,45 @@ RectangleRender.prototype.contains = function (mx, my) {
         (this.y <= my) && (this.y + this.h >= my);
 };
 
+// Icon Render
+function IconRender(x, y, w, h, img) {
+    // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+    // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+    // But we aren't checking anything else! We could put "Lalala" for the value of x
+    this.x = x || 0;
+    this.y = y || 0;
+    this.w = w || 1;
+    this.h = h || 1;
+    this.img = img;
+}
+
+// Draws this shape to a given context
+IconRender.prototype.draw = function (ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+};
+
+// Determine if a point is inside the shape's bounds
+IconRender.prototype.contains = function (mx, my) {
+    // All we have to do is make sure the Mouse X,Y fall in the area between
+    // the shape's X and (X + Width) and its Y and (Y + Height)
+    return (this.x <= mx) && (this.x + this.w >= mx) &&
+        (this.y <= my) && (this.y + this.h >= my);
+};
+
+IconRender.prototype.stroke = function (ctx, strokeStyle, strokeWidth) {
+    ctx.save();
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = strokeWidth;
+    ctx.strokeRect(this.x, this.y, this.w, this.h);
+    // ctx.strokeRect(20, 20, 150, 100);
+    ctx.restore();
+};
+
+IconRender.prototype.displace = function (dx, dy) {
+    this.x += dx;
+    this.y += dy;
+};
+
 // ==================== Text Render
 function TextRender(fontSize, x, y, rot, text, fill) {
     this.fontSize = fontSize;
@@ -182,6 +221,9 @@ class CanvasState {
         this.textList.forEach(function (t) {
             t.draw(ctx);
         });
+        this.iconList.forEach(function (i) {
+            i.draw(ctx);
+        });
     };
 
     draw(ctx) {
@@ -238,6 +280,8 @@ class CanvasState {
             list = this.pathList;
         } else if (obj instanceof TextRender) {
             list = this.textList;
+        } else if (obj instanceof IconRender) {
+            list = this.iconList;
         }
         for (var i = 0; i < list.length; i++) {
             if (list[i] === obj) {
