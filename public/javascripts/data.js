@@ -133,13 +133,47 @@ const OP_LIST = [
     'zofia'
 ];
 const GADGET_DATA = {
-    Breach: {
-        name: "Breach Charge",
-        img: ""
-    }
+    breach: {name: "Breach Charge"},
+    claymore: {name: "Claymore"},
+    smoke: {name: "Smoke Grenade"},
+    frag: {name: "Frag Grenade"},
+    flashbang: {name: "FlashBang"},
+    drone: {name: "Drone"},
+    impact: {name: "Impact Grenade"},
+    deployable: {name: "Deployable"},
+    bulletCam: {name: "Bulletproof Camera"},
+    c4: {name: "Nitro Cell (C4)"},
+    cam: {name: "Default Camera"},
+    barbed: {name: "Barbed Wire"},
+    barricade: {name: "Barricade"},
+    reinforcement: {name: "Reinforcement"},
+    mute: {name: "Mute Jammer"},
+    thermite: {name: "Thermite Charge"},
+    castle: {name: "Castle Barricade"},
+    fuze: {name: "Fuze Charge"},
+    kapkan: {name: "Kapkan Device"},
+    jager: {name: "ADS"},
+    bandit: {name: "Battery"},
+    kaid: {name: "ElectroClaw"},
+    gridlock: {name: "Trax Stinger"},
+    mozzie: {name: "Pest"},
+    hibana: {name: "Hibana Pellets"},
+    alibi: {name: "Prisma"},
+    capitaoF: {name: "Fire Bolt"},
+    capitaoS: {name: "Smoke Bolt"},
+    echo: {name: "Echo Drone"},
+    ela: {name: "Grzmot Mine"},
+    frost: {name: "Frost Trap"},
+    lesion: {name: "Gu"},
+    maestro: {name: "Evil Eye"},
+    maverick: {name: "Blowtorch"},
+    mira: {name: "Mira Window"},
+    nomad: {name: "Airjab"},
+    tachanka: {name: "Turret"},
+    valkyrie: {name: "Black Eye"},
 };
-const SCREEN_WIDTH = 2560;
-const SCREEN_HEIGHT = 1440;
+const SCREEN_WIDTH = 1920;
+const SCREEN_HEIGHT = 1080;
 
 let floor = 0;
 let mapLayers = {};

@@ -7,6 +7,7 @@
     setupMap(name);
     setupFloorKeys(name);
     setupOperatorIcons();
+    setupGadgetIcons();
 })();
 
 function setupMap(name) {
@@ -79,13 +80,35 @@ function setupOperatorIcons() {
         const opName = capitalizeFirstLetter(op);
         html = '';
         html += `<li class="icon-list-item">`;
-        html += `<img id="${op}Icon" src="images/operator/${op}.svg" height="${size}px" width="${size}px">`;
+        html += `<img id="${op}Icon" src="images/operator/${op}.svg" draggable="false" height="${size}px" width="${size}px">`;
         html += `${opName}`;
         html += `</li>`;
         $list.append(html);
     });
 
     $('#iconList .icon-list-item').click(function(_) {
+        $that = $(this);
+        logger.info(`${$that.value}`);
+        $that.parent().find('li').removeClass('active');
+        $that.addClass('active');
+    });
+}
+
+function setupGadgetIcons() {
+    let html = '';
+    const $list = $('#gadgetIcons');
+    const size = 48;
+    Object.keys(GADGET_DATA).forEach(function (key) {
+        const gadgetName = GADGET_DATA[key].name;
+        html = '';
+        html += `<li class="icon-list-item">`;
+        html += `<img id="${key}Icon" src="images/operator/zofia.svg" draggable="false" height="${size}px" width="${size}px">`;
+        html += `${gadgetName}`;
+        html += `</li>`;
+        $list.append(html);
+    });
+
+    $('#gadgetIcons .icon-list-item').click(function(_) {
         $that = $(this);
         logger.info(`${$that.value}`);
         $that.parent().find('li').removeClass('active');

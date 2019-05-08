@@ -4,6 +4,7 @@ dragElement(document.getElementById("main_tools"));
 $('#main_tools .radio').click(function (_) {
     $('#text_tools').addClass("invisible");
     $('#opPanel').addClass("invisible");
+    $('#gadgetPanel').addClass("invisible");
     $(this).siblings().removeClass("active");
     $(this).addClass("active");
 });
@@ -14,6 +15,10 @@ $('#text_tool').click(function (_) {
 
 $('#operator_tool').click(function (_) {
     $('#opPanel').removeClass("invisible");
+});
+
+$('#gadget_tool').click(function (_) {
+    $('#gadgetPanel').removeClass("invisible");
 });
 
 // Setup Operator Icons
