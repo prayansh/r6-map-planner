@@ -119,6 +119,15 @@ h3 {
     /*background: dodgerblue;*/
 }
 
+#user_list p, #user_list small {
+    color: white;
+    /*text-shadow: 2px 2px #777;*/
+}
+
+#user_list p {
+    font-size: 18pt;
+}
+
 /*TODO change*/
 .scroll-list {
     top: 60px;

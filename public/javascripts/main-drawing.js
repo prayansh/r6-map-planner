@@ -165,14 +165,11 @@ function setupDrawingBoard() {
         const mX = e.pageX;
         const mY = e.pageY;
         if ($.now() - lastEmit > 60) {
-            // Prototype for User Data
-            session.socket.emit('mousemove', {
-                'x': mX,
-                'y': mY,
-                'id': session.userId,
-                'color': session.color,
-                'layerData': layerToData(mapLayers),
-            });
+            emitMovingData(mX, mY,
+                session.userId, session.color,
+                layerToData(mapLayers),
+                session.username
+            );
             lastEmit = $.now();
         }
 
@@ -213,7 +210,7 @@ function setupDrawingBoard() {
     // Remove inactive clients after 10 seconds of inactivity
     setInterval(function () {
         Object.keys(session.clients).forEach((ident) => {
-            if ($.now() - session.clients[ident].updated > 10000) {
+            if ($.now() - session.clients[ident].updated > 30000) {
                 // Last update was more than 10 seconds ago.
                 // This user has probably closed the page
                 cursors[ident].remove();

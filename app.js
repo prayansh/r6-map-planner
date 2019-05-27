@@ -29,7 +29,7 @@ var io = socketIO.listen(server);
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-const COLORS_ARRAY = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#2ecc71'];
+const COLORS_ARRAY = ['#FFC312', '#C4E538', '#12CBC4', '#FDA7DF', '#ED4C67', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#833471'];
 let rooms = {
     main: {
         'name': 'main',
@@ -59,7 +59,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('joinRoom', (data) => {
         let room;
         if (data.roomName) {
-            if (!data.roomName in rooms) {
+            if (!(data.roomName in rooms)) {
                 socket.emit('roomNotFound', {roomName: data.roomName});
                 return;
             }
@@ -74,6 +74,7 @@ io.sockets.on('connection', function (socket) {
             color: color,
             mapName: room.mapName,
             roomName: room.name,
+            clientName: user.name,
         }; // parameters when a new user joins
         socket.emit('roomJoined', initData); // Send initial data to client
     });
@@ -85,7 +86,7 @@ io.sockets.on('connection', function (socket) {
             rooms[room.name] = room;
         }
         const color = room.colors.shift();
-        let user = newUser(data.name, color, socket);
+        let user = newUser(data.username, color, socket);
         users[user.id] = user;
         joinRoom(socket, user, room.name);
         const initData = {
@@ -93,6 +94,7 @@ io.sockets.on('connection', function (socket) {
             color: color,
             mapName: room.mapName,
             roomName: room.name,
+            clientName: user.name,
         }; // parameters when a new user joins
         socket.emit('roomJoined', initData); // Send initial data to client
     });
@@ -123,14 +125,14 @@ function newRoom(mapName) {
     return {
         'name': Math.random().toString(36).substr(3, 7),
         'mapName': mapName,
-        'colors': COLORS_ARRAY
+        'colors': [...COLORS_ARRAY]
     }
 }
 
 // Function to create new User Object
 function newUser(name, color, socket) {
     return {
-        'id': Math.round(Math.random() * Math.random()).toString(36),
+        'id': Math.round(Math.random() * Date.now()).toString(36),
         'name': name,
         'color': color,
         'socket': socket

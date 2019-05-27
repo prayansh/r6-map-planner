@@ -43,7 +43,7 @@
                     </div>
                     <input id="join_room" type="text" class="form-control" autocomplete="off"
                            placeholder="The room code (eg. YfgsFh)">
-                    <div class="invalid-feedback">Example invalid feedback text</div>
+                    <div class="invalid-feedback">Room Not found</div>
                 </div>
                 <div class="d-flex justify-content-center p-1">
                     <button type="button" class="btn btn-primary m-2">Join Room</button>
@@ -125,6 +125,14 @@
                     <!--Populated via JS-->
                 </ul>
             </div>
+        </div>
+    </div>
+
+    <div id="user_list" class="tool-panel" style="top: 0; left: 800px; position: absolute;">
+        <div id="user_list_fulcrum" class="input-group-prepend">
+            <div class="input-group-text"></div>
+        </div>
+        <div id="user_list_group" class="list-group">
         </div>
     </div>
 
