@@ -29,7 +29,18 @@ var io = socketIO.listen(server);
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var colors = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#2ecc71'];
+const COLORS_ARRAY = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#2ecc71'];
+let rooms = {
+    main: {
+        'name': 'main',
+        'colors': [],
+        'mapName': "none"
+    },
+};
+
+let users = {
+    // uIJKLh: {id: "", name: "", color: "", socket: null, roomName: ""}
+};
 
 app.use(logger('dev'));
 app.use(cookieParser());
@@ -41,15 +52,87 @@ app.use('/users', usersRouter);
 // Listen for incoming connections from clients
 io.sockets.on('connection', function (socket) {
     console.log('a user connected');
-    // var id = Math.round($.now() * Math.random());
-    var color = colors.shift();
-    colors.push(color);
-    var initData = {color: color}; // parameters when a new user joins
-    socket.emit('init', initData);
+    socket.join('main'); // initially join main room
+
+    socket.on('disconnect', () => console.log("Client disconnected"));
+
+    socket.on('joinRoom', (data) => {
+        let room;
+        if (data.roomName) {
+            if (!data.roomName in rooms) {
+                socket.emit('roomNotFound', {roomName: data.roomName});
+                return;
+            }
+            room = rooms[data.roomName]
+        }
+        const color = room.colors.shift();
+        const user = newUser(data.username, color, socket);
+        users[user.id] = user;
+        joinRoom(socket, user, room.name);
+        const initData = {
+            userId: user.id,
+            color: color,
+            mapName: room.mapName,
+            roomName: room.name,
+        }; // parameters when a new user joins
+        socket.emit('roomJoined', initData); // Send initial data to client
+    });
+
+    socket.on('createRoom', (data) => {
+        let room;
+        if (data.mapName) {
+            room = newRoom(data.mapName);
+            rooms[room.name] = room;
+        }
+        const color = room.colors.shift();
+        let user = newUser(data.name, color, socket);
+        users[user.id] = user;
+        joinRoom(socket, user, room.name);
+        const initData = {
+            userId: user.id,
+            color: color,
+            mapName: room.mapName,
+            roomName: room.name,
+        }; // parameters when a new user joins
+        socket.emit('roomJoined', initData); // Send initial data to client
+    });
+
     // Start listening for mouse move events
     socket.on('mousemove', function (data) {
         // This line sends the event (broadcasts it)
-        // to everyone except the originating client.
-        socket.broadcast.emit('moving', data);
+        const roomName = users[data.id].roomName;
+        socket.broadcast.to(roomName).emit('moving', data);
     });
 });
+
+// Function to join room
+function joinRoom(socket, user, roomName) {
+    user.socket = socket;
+    user.socket.join(roomName);
+    user.socket.broadcast.to(roomName).emit('newUser', {
+        id: user.id,
+        name: user.name,
+        color: user.color
+    });
+    user.roomName = roomName;
+    users[user.name] = user;
+}
+
+// Function to create new Room Object
+function newRoom(mapName) {
+    return {
+        'name': Math.random().toString(36).substr(3, 7),
+        'mapName': mapName,
+        'colors': COLORS_ARRAY
+    }
+}
+
+// Function to create new User Object
+function newUser(name, color, socket) {
+    return {
+        'id': Math.round(Math.random() * Math.random()).toString(36),
+        'name': name,
+        'color': color,
+        'socket': socket
+    }
+}

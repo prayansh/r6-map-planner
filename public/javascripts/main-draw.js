@@ -1,3 +1,0 @@
-/**
- * Everything Related to Drawing
- */

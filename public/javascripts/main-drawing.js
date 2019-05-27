@@ -1,28 +1,28 @@
-$(function () {
-    // This demo depends on the canvas element
+let currentLayer = false;
+let cursors = {};
+let mapLayers = {};
+
+function setupDrawingBoard() {
     if (!('getContext' in document.createElement('canvas'))) {
         alert('Sorry, it looks like your browser does not support canvas!');
         return false;
     }
 
-    var doc = $(document),
+    let doc = $(document),
         win = $(window),
         $mainMap = $('#main_map')
     ;
 
-    // Generate an unique ID
-    var id = Math.round($.now() * Math.random());
-
     // A flag for mouseDown activity
-    var mouseDown = false;
+    let mouseDown = false;
 
-    var clients = {};
-    var cursors = {};
-
-    var socket = io();
-    var userColor = '#fff';
-    var ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, OPERATOR: 4, GADGET: 5};
-    var mode = ModeEnums.SELECT;
+    let ModeEnums = {PEN: 1, TEXT: 2, SELECT: 3, OPERATOR: 4, GADGET: 5};
+    let mode = ModeEnums.SELECT;
+    let prev = {
+        x: 100,
+        y: 100
+    };
+    let lastEmit = $.now();
 
     $('#pen_tool').click(function (_) {
         mode = ModeEnums.PEN;
@@ -59,7 +59,7 @@ $(function () {
                 $("#erase_tool").trigger("click");
             } else if (event.code === 'KeyZ') { // Z
                 // move toolbar to mouse coordinates
-                $("#main_tools").css({top: prev.y, left: prev.x, position:'absolute'});
+                $("#main_tools").css({top: prev.y, left: prev.x, position: 'absolute'});
             } else if (event.code === 'KeyJ') { // Z
                 // move toolbar to mouse coordinates
                 $("#floor_down_btn").trigger("click");
@@ -71,66 +71,6 @@ $(function () {
         return false;
     }, false);
 
-    socket.on('init', function (initData) {
-        // id = initData.id;
-        userColor = initData.color;
-        $('#fulcrum_div').css({'background': userColor});
-    });
-
-    function redrawPeerCanvas() {
-        // Clear All Peer Canvases
-        Object.keys(mapLayers).forEach(function(key){
-            mapLayers[key].peerContext.clearRect(0, 0, 2560, 1440);
-        });
-        Object.keys(clients).forEach(function (id) {
-            let data = clients[id].layerData;
-            Object.keys(data).forEach(function(floorNum){
-                const clientColor = clients[id].color;
-                let canvasState = data[floorNum];
-                canvasState.pathList.forEach(function (path) {
-                    var p = new PathRender(0, 0, clientColor);
-                    p.pointsNotDrawn = path.points;
-                    p.draw(mapLayers[floorNum].peerContext);
-                });
-                canvasState.textList.forEach(function (text) {
-                    var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
-                    t.draw(mapLayers[floorNum].peerContext);
-                });
-                canvasState.iconList.forEach(function (icon) {
-                    const img = $(`#${icon.imgName}Icon`)[0];
-                    var i = new IconRender(icon.x, icon.y, icon.w, icon.h, img);
-                    i.draw(mapLayers[floorNum].peerContext);
-                });
-            });
-        });
-    }
-
-    // Receive data from other clients
-    socket.on('moving', function (data) {
-        logger.debug("Received: ", data);
-
-        if (!(data.id in clients)) {
-            // a new user has come online. create a cursor for them
-            cursors[data.id] = $('<div class="cursor">').appendTo('#cursors');
-        }
-
-        // Move the mouse pointer
-        cursors[data.id].css({
-            'left': data.x,
-            'top': data.y
-        });
-
-        // Saving the current client state
-        clients[data.id] = data;
-        clients[data.id].updated = $.now();
-        redrawPeerCanvas();
-    });
-
-    var prev = {
-        x: 100,
-        y: 100
-    };
-
     $mainMap.on('mousedown', function (e) {
         e.preventDefault();
         var mX = e.pageX - $mainMap.offset().left;
@@ -138,7 +78,7 @@ $(function () {
         mouseDown = true;
         switch (mode) {
             case ModeEnums.PEN: {
-                var p = new PathRender(mX, mY, userColor);
+                var p = new PathRender(mX, mY, session.color);
                 currentLayer.canvasState.addPath(p);
             }
                 break;
@@ -154,7 +94,7 @@ $(function () {
                 const fontSize = $("#text_tool_size").val();
                 const text = $("#text_tool_data").val();
                 if (text) {
-                    var t = new TextRender(fontSize, mX, mY, 0, text, userColor);
+                    var t = new TextRender(fontSize, mX, mY, 0, text, session.color);
                     currentLayer.canvasState.addText(t);
                     t.draw(currentLayer.userContext);
                 }
@@ -215,65 +155,22 @@ $(function () {
         }
     });
 
-
     doc.bind('mouseup mouseleave', function () {
         mouseDown = false;
         currentLayer.canvasState.dragging = false;
     });
 
-    var lastEmit = $.now();
-
-    function canvasStateToData(canvasState) {
-        var data = {};
-        data.pathList = [];
-        canvasState.pathList.forEach(function (path) {
-            var p = {};
-            p.points = path.points;
-            data.pathList.push(p);
-        });
-        data.textList = [];
-        canvasState.textList.forEach(function (text) {
-            var t = {};
-            t.x = text.x;
-            t.y = text.y;
-            t.fontSize = text.fontSize;
-            t.text = text.text;
-            data.textList.push(t);
-        });
-        data.iconList = [];
-        canvasState.iconList.forEach(function (icon) {
-            var i = {};
-            i.x = icon.x;
-            i.y = icon.y;
-            i.w = icon.w;
-            i.h = icon.h;
-            i.imgName = icon.img.id.substring(0, icon.img.id.indexOf('Icon'));
-            data.iconList.push(i);
-        });
-        return data;
-    }
-
-    function layerToData(mapLayers) {
-        var dataObj = {};
-        Object.keys(mapLayers).forEach(function(i){
-            let layer = mapLayers[i];
-            dataObj[layer.floorNum] = canvasStateToData(layer.canvasState);
-        });
-        logger.debug("Sending: ", dataObj);
-        return dataObj;
-    }
-
     doc.on('mousemove', function (e) {
         // e.preventDefault();
-        var mX = e.pageX;
-        var mY = e.pageY;
+        const mX = e.pageX;
+        const mY = e.pageY;
         if ($.now() - lastEmit > 60) {
             // Prototype for User Data
-            socket.emit('mousemove', {
-                'x': e.pageX,
-                'y': e.pageY,
-                'id': id,
-                'color': userColor,
+            session.socket.emit('mousemove', {
+                'x': mX,
+                'y': mY,
+                'id': session.userId,
+                'color': session.color,
                 'layerData': layerToData(mapLayers),
             });
             lastEmit = $.now();
@@ -289,10 +186,6 @@ $(function () {
                     p.addPoint(e.pageX, e.pageY);
                     p.draw(currentLayer.userContext);
                     break;
-                case ModeEnums.OPERATOR:
-                    break;
-                case ModeEnums.TEXT:
-                    break;
                 case ModeEnums.SELECT:
                     if (currentLayer.canvasState.dragging) {
                         // We don't want to drag the object by its top-left corner,
@@ -306,30 +199,118 @@ $(function () {
                         currentLayer.canvasState.invalidate(); // Something's dragging so we must redraw
                     }
                     break;
+                case ModeEnums.OPERATOR:
+                case ModeEnums.TEXT:
+                default:
+                    break;
             }
 
         }
-        prev.x = e.pageX;
-        prev.y = e.pageY;
+        prev.x = mX;
+        prev.y = mY;
     });
 
     // Remove inactive clients after 10 seconds of inactivity
     setInterval(function () {
-        for (ident in clients) {
-            if ($.now() - clients[ident].updated > 10000) {
-
+        Object.keys(session.clients).forEach((ident) => {
+            if ($.now() - session.clients[ident].updated > 10000) {
                 // Last update was more than 10 seconds ago.
                 // This user has probably closed the page
-
                 cursors[ident].remove();
-                delete clients[ident];
+                delete session.clients[ident];
                 delete cursors[ident];
             }
-        }
+        });
     }, 10000);
 
     // Redraw check
     setInterval(function () {
         currentLayer.canvasState.draw(currentLayer.userContext); // check for invalidation here
-    }, 30);  //maybe longer interval???
-});
+    }, 100);  //maybe longer interval???
+}
+
+function canvasStateToData(canvasState) {
+    var data = {};
+    data.pathList = [];
+    canvasState.pathList.forEach(function (path) {
+        var p = {};
+        p.points = path.points;
+        data.pathList.push(p);
+    });
+    data.textList = [];
+    canvasState.textList.forEach(function (text) {
+        var t = {};
+        t.x = text.x;
+        t.y = text.y;
+        t.fontSize = text.fontSize;
+        t.text = text.text;
+        data.textList.push(t);
+    });
+    data.iconList = [];
+    canvasState.iconList.forEach(function (icon) {
+        var i = {};
+        i.x = icon.x;
+        i.y = icon.y;
+        i.w = icon.w;
+        i.h = icon.h;
+        i.imgName = icon.img.id.substring(0, icon.img.id.indexOf('Icon'));
+        data.iconList.push(i);
+    });
+    return data;
+}
+
+function layerToData(mapLayers) {
+    var dataObj = {};
+    Object.keys(mapLayers).forEach(function (i) {
+        let layer = mapLayers[i];
+        dataObj[layer.floorNum] = canvasStateToData(layer.canvasState);
+    });
+    logger.debug("Sending: ", dataObj);
+    return dataObj;
+}
+
+function redrawPeerCanvas() {
+    // Clear All Peer Canvases
+    Object.keys(mapLayers).forEach(function (key) {
+        mapLayers[key].peerContext.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    });
+    Object.keys(session.clients).forEach(function (id) {
+        let data = session.clients[id].layerData;
+        Object.keys(data).forEach(function (floorNum) {
+            const clientColor = session.clients[id].color;
+            let canvasState = data[floorNum];
+            canvasState.pathList.forEach(function (path) {
+                var p = new PathRender(0, 0, clientColor);
+                p.pointsNotDrawn = path.points;
+                p.draw(mapLayers[floorNum].peerContext);
+            });
+            canvasState.textList.forEach(function (text) {
+                var t = new TextRender(text.fontSize, text.x, text.y, 0, text.text, clientColor);
+                t.draw(mapLayers[floorNum].peerContext);
+            });
+            canvasState.iconList.forEach(function (icon) {
+                const img = $(`#${icon.imgName}Icon`)[0];
+                var i = new IconRender(icon.x, icon.y, icon.w, icon.h, img);
+                i.draw(mapLayers[floorNum].peerContext);
+            });
+        });
+    });
+}
+
+function handleMovingData(data) {
+    if (!(data.id in session.clients)) {
+        // a new user has come online. create a cursor for them
+        cursors[data.id] = $('<div class="cursor">').appendTo('#cursors');
+    }
+
+    // Move the mouse pointer
+    cursors[data.id].css({
+        'left': data.x,
+        'top': data.y
+    });
+
+    // Saving the current client state
+    session.clients[data.id] = data;
+    session.clients[data.id].updated = $.now();
+    redrawPeerCanvas();
+}

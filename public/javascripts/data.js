@@ -3,6 +3,7 @@
  */
 const MAP_DATA = {
     BANK: {
+        thumbnail: "bank/bank-0.jpg",
         floors: {
             basement: {
                 floorNum: 0,
@@ -23,6 +24,7 @@ const MAP_DATA = {
         }
     },
     CHALET: {
+        thumbnail: "chalet/chalet-0.jpg",
         floors: {
             basement: {
                 floorNum: 0,
@@ -43,22 +45,24 @@ const MAP_DATA = {
         }
     },
     BORDER: {
+        thumbnail: "border/border-3.jpg",
         floors: {
             first: {
                 floorNum: 0,
-                img: "border/border-1.jpg"
+                img: "border/border-3.jpg"
             },
             second: {
                 floorNum: 1,
-                img: "border/border-2.jpg"
+                img: "border/border-1.jpg"
             },
             third: {
                 floorNum: 2,
-                img: "border/border-3.jpg"
+                img: "border/border-2.jpg"
             }
         }
     },
     CLUBHOUSE: {
+        thumbnail: "clubhouse/clubhouse-0.jpg",
         floors: {
             basement: {
                 floorNum: 0,
@@ -174,18 +178,3 @@ const GADGET_DATA = {
 };
 const SCREEN_WIDTH = 1920;
 const SCREEN_HEIGHT = 1080;
-
-let floor = 0;
-let mapLayers = {};
-let currentLayer = false;
-
-// let currentCanvasCtx = false;
-
-class MapLayer {
-    constructor(floorNum, userContext, peerContext, userCanvas) {
-        this.floorNum = floorNum;
-        this.userContext = userContext;
-        this.peerContext = peerContext;
-        this.canvasState = new CanvasState(userCanvas);
-    }
-}

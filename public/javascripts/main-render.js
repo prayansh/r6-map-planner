@@ -2,13 +2,13 @@
  * Everything Related to Rendering the initial map
  */
 
-(function () {
-    var name = "CLUBHOUSE";
-    setupMap(name);
-    setupFloorKeys(name);
+function setupMainMap(mapName) {
+    $('#app_dom').show();
+    setupMap(mapName);
+    setupFloorKeys(mapName);
     setupOperatorIcons();
     setupGadgetIcons();
-})();
+}
 
 function setupMap(name) {
     var $mainScreen = $('#main_map');
@@ -63,12 +63,12 @@ function setupFloorKeys(name) {
     const length = Object.keys(mData.floors).length;
     showFloor(length, 0);
     $('#floor_up_btn').click(function (_) {
-        floor = Math.min(length - 1, floor + 1);
-        showFloor(length, floor);
+        session.floor = Math.min(length - 1, session.floor + 1);
+        showFloor(length, session.floor);
     });
     $('#floor_down_btn').click(function (_) {
-        floor = Math.max(0, floor - 1);
-        showFloor(length, floor);
+        session.floor = Math.max(0, session.floor - 1);
+        showFloor(length, session.floor);
     });
 }
 
@@ -116,7 +116,11 @@ function setupGadgetIcons() {
     });
 }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+class MapLayer {
+    constructor(floorNum, userContext, peerContext, userCanvas) {
+        this.floorNum = floorNum;
+        this.userContext = userContext;
+        this.peerContext = peerContext;
+        this.canvasState = new CanvasState(userCanvas);
+    }
 }
-

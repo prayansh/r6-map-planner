@@ -80,6 +80,10 @@ TextRender.prototype.draw = function (ctx) {
     this.height = this.fontSize;
     ctx.fillStyle = this.fill;
     ctx.rotate(this.rot);
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 4;
     ctx.fillText(this.text, this.x, this.y);
     ctx.restore();
 };
@@ -227,7 +231,6 @@ class CanvasState {
     };
 
     draw(ctx) {
-        // TODO redraw
         if (!this.valid) {
             this.clear(ctx);
             this.forceDraw(ctx);

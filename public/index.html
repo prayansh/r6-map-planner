@@ -8,7 +8,7 @@
     <!-- The stylesheets -->
     <link rel="stylesheet" href="stylesheets/style.css"/>
 
-    <title>Node.js Multiplayer Drawing Game | Tutorialzine Demo</title>
+    <title>Rainbow Six Strategy Designer</title>
 
     <!--<[if lt IE 9]>-->
     <!--<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>-->
@@ -16,64 +16,125 @@
 </head>
 
 <body>
-<div id="cursors">
-    <!-- The mouse pointers will be created here -->
-</div>
-<div id="main_tools" class="tool-panel">
-
-    <div id="main_tools_fulcrum" class="input-group-prepend">
-        <div id="fulcrum_div" class="input-group-text"></div>
-    </div>
-    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-        <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="Draw tools">
-            <button id="move_tool" type="button" class="radio btn btn-secondary active">Move
-            </button>
-            <button id="pen_tool" type="button" class="radio btn btn-secondary">Pen</button>
-            <button id="text_tool" type="button" class="radio btn btn-secondary">Text</button>
-            <button id="operator_tool" type="button" class="radio btn btn-secondary">Operator
-            </button>
-            <!--<button id="gadget_tool" type="button" class="radio btn btn-secondary">Gadget</button>-->
-            <button id="erase_tool" type="button" class="btn btn-secondary">Erase</button>
-        </div>
-        <div id="floor_buttons" class="btn-group mr-2" role="group" aria-label="Floor Tools">
-            <button id="floor_up_btn" type="button" class="btn btn-secondary">&#8593;</button>
-            <button id="floor_down_btn" type="button" class="btn btn-secondary">&#8595;</button>
-        </div>
-        <div id="text_tools" class="input-group invisible">
-            <div class="input-group-prepend">
-                <div class="input-group-text" id="text_label">T</div>
+<div id="intro_dom" class="container">
+    <div class="row justify-content-center">
+        <div class="col-7">
+            <div id="intro_options_group" class="p-3">
+                <div class="d-flex justify-content-center">
+                    <button id="opt_create" type="button" class="btn btn-primary m-2">
+                        Create
+                    </button>
+                    <button id="opt_join" type="button" class="btn btn-primary m-2">
+                        Join
+                    </button>
+                </div>
             </div>
-            <input type="text" class="form-control" placeholder="Text"
-                   aria-label="Text Here" aria-describedby="text_label"
-                   id="text_tool_data">
-            <div class="input-group-prepend">
-                <div class="input-group-text" id="font_label">Size</div>
+            <div id="intro_join_group" class="p-3">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Name</span>
+                    </div>
+                    <input id="join_name" type="text" class="form-control" autocomplete="off"
+                           placeholder="Your name">
+                </div>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Room Code</span>
+                    </div>
+                    <input id="join_room" type="text" class="form-control" autocomplete="off"
+                           placeholder="The room code (eg. YfgsFh)">
+                    <div class="invalid-feedback">Example invalid feedback text</div>
+                </div>
+                <div class="d-flex justify-content-center p-1">
+                    <button type="button" class="btn btn-primary m-2">Join Room</button>
+                </div>
             </div>
-            <input type="number" class="form-control" value="32"
-                   aria-describedby="text_label"
-                   min="20" max="96" id="text_tool_size">
-        </div>
-    </div>
-    <div id="opPanel" class="tool-panel invisible">
-        <input id="opInput" type="text" placeholder="Search by name" class="form-control">
-        <div class="scroll-list">
-            <ul id="iconList" class="list-group">
-                <!--Populated via JS-->
-            </ul>
-        </div>
-    </div>
-    <div id="gadgetPanel" class="tool-panel invisible">
-        <input id="gadgetInput" type="text" placeholder="Search by name" class="form-control">
-        <div class="scroll-list">
-            <ul id="gadgetIcons" class="list-group">
-                <!--Populated via JS-->
-            </ul>
+            <div id="intro_create_group" class="p-3">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Name</span>
+                    </div>
+                    <input id="create_name" type="text" class="form-control" autocomplete="off"
+                           placeholder="Your name">
+                </div>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Map Name</span>
+                    </div>
+                    <select id="create_map" class="custom-select">
+                        <option selected>Choose Map</option>
+                        <!-- Populate Via JS -->
+                    </select>
+                </div>
+                <div class="d-flex justify-content-center p-1">
+                    <button type="button" class="btn btn-primary m-2">Create Room</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="main_map">
-    <!--Populated via JS-->
+<div id="app_dom">
+    <div id="main_tools" class="tool-panel">
+
+        <div id="main_tools_fulcrum" class="input-group-prepend">
+            <div id="fulcrum_div" class="input-group-text"></div>
+        </div>
+        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div id="tool_buttons" class="btn-group mr-2" role="group" aria-label="Draw tools">
+                <button id="move_tool" type="button" class="radio btn btn-secondary active">Move
+                </button>
+                <button id="pen_tool" type="button" class="radio btn btn-secondary">Pen</button>
+                <button id="text_tool" type="button" class="radio btn btn-secondary">Text</button>
+                <button id="operator_tool" type="button" class="radio btn btn-secondary">Operator
+                </button>
+                <!--<button id="gadget_tool" type="button" class="radio btn btn-secondary">Gadget</button>-->
+                <button id="erase_tool" type="button" class="btn btn-secondary">Delete</button>
+            </div>
+            <div id="floor_buttons" class="btn-group mr-2" role="group" aria-label="Floor Tools">
+                <button id="floor_up_btn" type="button" class="btn btn-secondary">&#8593;</button>
+                <button id="floor_down_btn" type="button" class="btn btn-secondary">&#8595;</button>
+            </div>
+            <div id="text_tools" class="input-group invisible">
+                <div class="input-group-prepend">
+                    <div class="input-group-text" id="text_label">T</div>
+                </div>
+                <input type="text" class="form-control" placeholder="Text"
+                       aria-label="Text Here" aria-describedby="text_label"
+                       id="text_tool_data">
+                <div class="input-group-prepend">
+                    <div class="input-group-text" id="font_label">Size</div>
+                </div>
+                <input type="number" class="form-control" value="32"
+                       aria-describedby="text_label"
+                       min="12" max="96" id="text_tool_size">
+            </div>
+        </div>
+        <div id="opPanel" class="tool-panel invisible">
+            <input id="opInput" type="text" placeholder="Search by name" class="form-control">
+            <div class="scroll-list">
+                <ul id="iconList" class="list-group">
+                    <!--Populated via JS-->
+                </ul>
+            </div>
+        </div>
+        <div id="gadgetPanel" class="tool-panel invisible">
+            <input id="gadgetInput" type="text" placeholder="Search by name" class="form-control">
+            <div class="scroll-list">
+                <ul id="gadgetIcons" class="list-group">
+                    <!--Populated via JS-->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="main_map">
+        <!--Populated via JS-->
+    </div>
+
+    <div id="cursors">
+        <!-- The mouse pointers will be created here -->
+    </div>
 </div>
 
 <!-- JavaScript includes. Notice that socket.io.js is served by node.js -->
@@ -81,13 +142,18 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+
 <script src="javascripts/data.js"></script>
 <script src="javascripts/logger.js"></script>
+<script src="javascripts/common.js"></script>
+<script src="javascripts/intro.js"></script>
+<script src="javascripts/socket.js"></script>
+<script src="javascripts/main.js"></script>
 <script src="javascripts/Renders.js"></script>
-<script src="javascripts/script.js"></script>
-<script src="javascripts/ui.js"></script>
+<script src="javascripts/main-drawing.js"></script>
 <script src="javascripts/main-render.js"></script>
-<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="javascripts/ui.js"></script>
 
 </body>
 </html>
