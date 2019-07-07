@@ -278,7 +278,7 @@ function redrawPeerCanvas() {
             let canvasState = data[floorNum];
             canvasState.pathList.forEach(function (path) {
                 var p = new PathRender(0, 0, clientColor);
-                p.pointsNotDrawn = path.points;
+                p.pointsNotDrawn = [...path.points];
                 p.draw(mapLayers[floorNum].peerContext);
             });
             canvasState.textList.forEach(function (text) {

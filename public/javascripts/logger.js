@@ -38,4 +38,4 @@ class Logger {
 }
 
 // Default Logger
-const logger = new Logger(LogLevel.DEBUG);
+const logger = new Logger(LogLevel.INFO);
