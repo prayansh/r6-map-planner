@@ -45,15 +45,15 @@ const MAP_DATA = {
         }
     },
     BORDER: {
-        thumbnail: "border/border-3.jpg",
+        thumbnail: "border/border-1.jpg",
         floors: {
             first: {
                 floorNum: 0,
-                img: "border/border-3.jpg"
+                img: "border/border-0.jpg"
             },
             second: {
                 floorNum: 1,
-                img: "border/border-1.jpg"
+                img: "border/border-2.jpg"
             },
             third: {
                 floorNum: 2,
@@ -152,31 +152,31 @@ const GADGET_DATA = {
     barricade: {name: "Barricade", icon: "barricade.png"},
     reinforcement: {name: "Reinforcement", icon: "reinforcement.png"},
     hole: {name: "Hole", icon: "hole.png"},
-    mute: {name: "Mute Jammer", icon: "jammer.png"},
-    thatcher: {name: "EMP Grenade", icon: "emp.png"},
-    thermite: {name: "Thermite Charge", icon: "exothermic.png"},
-    castle: {name: "Castle Barricade", icon: "castle.png"},
-    fuze: {name: "Fuze Charge", icon: "cluster.png"},
-    kapkan: {name: "Kapkan Device", icon: "edd.png"},
-    jager: {name: "ADS", icon: "trophy.png"},
-    bandit: {name: "Battery", icon: "battery.png"},
-    kaid: {name: "ElectroClaw", icon: "electroclaw.png"},
-    gridlock: {name: "Trax Stinger", icon: "trax.png"},
-    mozzie: {name: "Pest", icon: "pest.png"},
-    hibana: {name: "Hibana Pellets", icon: "hibana.png"},
-    alibi: {name: "Prisma", icon: "prisma.png"},
+    jammer: {name: "Mute Jammer", icon: "jammer.png"},
+    emp: {name: "EMP Grenade", icon: "emp.png"},
+    exothermic: {name: "Thermite Charge", icon: "exothermic.png"},
+    bulletproofBarricade: {name: "Castle Barricade", icon: "castle.png"},
+    clusterCharge: {name: "Fuze Charge", icon: "cluster.png"},
+    entryDenial: {name: "Kapkan Device", icon: "edd.png"},
+    activeDefenseSystem: {name: "ADS", icon: "trophy.png"},
+    battery: {name: "Battery", icon: "battery.png"},
+    electroclaw: {name: "ElectroClaw", icon: "electroclaw.png"},
+    trax: {name: "Trax Stinger", icon: "trax.png"},
+    pest: {name: "Pest", icon: "pest.png"},
+    xKairos: {name: "Hibana Pellets", icon: "hibana.png"},
+    prisma: {name: "Prisma", icon: "prisma.png"},
     capitaoF: {name: "Fire Bolt", icon: "fire_bolt.png"},
     // capitaoS: {name: "Smoke Bolt", icon: "smoke_bolt.png"},
-    echo: {name: "Yokai Drone", icon: "yokai.png"},
-    ela: {name: "Grzmot Mine", icon: "grzmot.png"},
-    frost: {name: "Frost Trap", icon: "bear_trap.png"},
-    lesion: {name: "Gu Mine", icon: "gu.png"},
-    maestro: {name: "Evil Eye", icon: "evil_eye.png"},
-    maverick: {name: "Blowtorch", icon: "blowtorch.png"},
-    mira: {name: "Mira Window", icon: "black_mirror.png"},
-    nomad: {name: "Airjab", icon: "airjab.png"},
-    tachanka: {name: "Turret", icon: "turret.png"},
-    valkyrie: {name: "Black Eye", icon: "black_eye.png"},
+    yokai: {name: "Yokai Drone", icon: "yokai.png"},
+    grzmot: {name: "Grzmot Mine", icon: "grzmot.png"},
+    welcomeMat: {name: "Frost Trap", icon: "bear_trap.png"},
+    gu: {name: "Gu Mine", icon: "gu.png"},
+    evilEye: {name: "Evil Eye", icon: "evil_eye.png"},
+    blowtorch: {name: "Blowtorch", icon: "blowtorch.png"},
+    blackMirror: {name: "Mira Window", icon: "black_mirror.png"},
+    airjab: {name: "Airjab", icon: "airjab.png"},
+    turret: {name: "Turret", icon: "turret.png"},
+    blackEye: {name: "Black Eye", icon: "black_eye.png"},
 };
 const SCREEN_WIDTH = 1920;
 const SCREEN_HEIGHT = 1080;
