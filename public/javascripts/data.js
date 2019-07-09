@@ -53,7 +53,7 @@ const MAP_DATA = {
             },
             second: {
                 floorNum: 1,
-                img: "border/border-2.jpg"
+                img: "border/border-1.jpg"
             },
             third: {
                 floorNum: 2,
