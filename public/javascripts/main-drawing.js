@@ -36,6 +36,9 @@ function setupDrawingBoard() {
     $('#operator_tool').click(function (_) {
         mode = ModeEnums.OPERATOR;
     });
+    $('#gadget_tool').click(function (_) {
+        mode = ModeEnums.GADGET;
+    });
     $('#erase_tool').click(function (_) {
         // delete selected object from canvas
         if (currentLayer.canvasState.selection) {
@@ -49,13 +52,7 @@ function setupDrawingBoard() {
         if (mode !== ModeEnums.TEXT) {
             // Do something with the captured event.keyCode
             logger.debug(`keyCode: ${event.keyCode}, code: ${event.code}`);
-            if (event.code === 'KeyQ') { // Q
-                $("#move_tool").trigger("click");
-            } else if (event.code === 'KeyW') { // W
-                $("#pen_tool").trigger("click");
-            } else if (event.code === 'KeyE') { // E
-                $("#text_tool").trigger("click");
-            } else if (event.code === 'Backspace') { // Backspace
+            if (event.code === 'Backspace') { // Backspace
                 $("#erase_tool").trigger("click");
             } else if (event.code === 'KeyZ') { // Z
                 // move toolbar to mouse coordinates
@@ -85,7 +82,15 @@ function setupDrawingBoard() {
             case ModeEnums.OPERATOR: {
                 const activeIcon = $('#iconList').find('.active');
                 let img = activeIcon.find('img')[0];
-                let icon = new IconRender(mX, mY, 32, 32, img);
+                let icon = new IconRender(mX, mY, 25, 25, img);
+                currentLayer.canvasState.addIcon(icon);
+                icon.draw(currentLayer.userContext);
+            }
+                break;
+            case ModeEnums.GADGET: {
+                const activeIcon = $('#gadgetIcons').find('.active');
+                let img = activeIcon.find('img')[0];
+                let icon = new IconRender(mX, mY, 25, 25, img);
                 currentLayer.canvasState.addIcon(icon);
                 icon.draw(currentLayer.userContext);
             }
@@ -196,8 +201,6 @@ function setupDrawingBoard() {
                         currentLayer.canvasState.invalidate(); // Something's dragging so we must redraw
                     }
                     break;
-                case ModeEnums.OPERATOR:
-                case ModeEnums.TEXT:
                 default:
                     break;
             }

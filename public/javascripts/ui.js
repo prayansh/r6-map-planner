@@ -54,6 +54,13 @@ $("#opInput").on("keyup", function () {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
 });
+$("#gadgetInput").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    logger.debug(`filtering for:${value}`);
+    $("#gadgetIcons li").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+});
 // End Setup Operator Icons
 
 function dragElement(elmnt) {

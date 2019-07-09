@@ -88,7 +88,7 @@ function setupOperatorIcons() {
 
     $('#iconList .icon-list-item').click(function(_) {
         $that = $(this);
-        logger.info(`${$that.value}`);
+        logger.debug(`${$that.value}`);
         $that.parent().find('li').removeClass('active');
         $that.addClass('active');
     });
@@ -100,9 +100,10 @@ function setupGadgetIcons() {
     const size = 48;
     Object.keys(GADGET_DATA).forEach(function (key) {
         const gadgetName = GADGET_DATA[key].name;
+        const gadgetIcon = GADGET_DATA[key].icon;
         html = '';
         html += `<li class="icon-list-item">`;
-        html += `<img id="${key}Icon" src="images/operator/zofia.svg" draggable="false" height="${size}px" width="${size}px">`;
+        html += `<img id="${key}Icon" src="images/gadget/${gadgetIcon}" draggable="false" height="${size}px" width="${size}px">`;
         html += `${gadgetName}`;
         html += `</li>`;
         $list.append(html);
@@ -110,7 +111,7 @@ function setupGadgetIcons() {
 
     $('#gadgetIcons .icon-list-item').click(function(_) {
         $that = $(this);
-        logger.info(`${$that.value}`);
+        logger.debug(`${$that.value}`);
         $that.parent().find('li').removeClass('active');
         $that.addClass('active');
     });
