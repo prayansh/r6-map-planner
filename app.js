@@ -69,6 +69,7 @@ io.sockets.on('connection', function (socket) {
         users[user.id] = user;
         joinRoom(socket, user, room.name);
         const initData = {
+            roomType: room.type,
             userId: user.id,
             color: color,
             mapName: room.mapName,
@@ -81,7 +82,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('createRoom', (data) => {
         let room;
         if (data.mapName) {
-            room = newRoom(data.mapName);
+            room = newRoom(data.roomType, data.mapName);
             rooms[room.name] = room;
         }
         const color = room.colors.shift();
@@ -89,6 +90,7 @@ io.sockets.on('connection', function (socket) {
         users[user.id] = user;
         joinRoom(socket, user, room.name);
         const initData = {
+            roomType: room.type,
             userId: user.id,
             color: color,
             mapName: room.mapName,
@@ -120,8 +122,9 @@ function joinRoom(socket, user, roomName) {
 }
 
 // Function to create new Room Object
-function newRoom(mapName) {
+function newRoom(roomType, mapName) {
     return {
+        'type': roomType,
         'name': Math.random().toString(36).substr(3, 7),
         'mapName': mapName,
         'colors': [...COLORS_ARRAY]

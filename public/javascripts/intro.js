@@ -1,6 +1,4 @@
 // Everything related to the Intro Scene
-const DATA = require('./data.json');
-
 function showIntroDom() {
     $('#app_dom').hide();
     $('#intro_dom').show();
@@ -9,12 +7,23 @@ function showIntroDom() {
     let $createGroup = $('#intro_create_group');
 
     let html = '';
-    const MAP_DATA = DATA[session.roomType].MAPS;
-    Object.keys(MAP_DATA).forEach(function (key, _) {
+    const GAME_DATA = Object.keys(DATA);
+    GAME_DATA.forEach(function (key, _) {
         html += `<option value="${key}">${key}</option>`;
-
     });
-    $createGroup.find('select').append(html);
+    $createGroup.find('#choose_game').append(html);
+
+    $('#choose_game').on('change', function() {
+        console.log(this.value)
+        $createGroup.find('#create_map').empty();
+        let genHtml = '';
+        const MAP_DATA = DATA[this.value].MAPS;
+        Object.keys(MAP_DATA).forEach(function (key, _) {
+            genHtml += `<option value="${key}">${key}</option>`;
+        });
+        console.log("PRAY", genHtml);
+        $createGroup.find('#create_map').append(genHtml);
+    });
 
     $optionsGroup.show();
     $joinGroup.hide();
@@ -59,21 +68,33 @@ function showIntroDom() {
         // Verify Fields
         let $createName = $('#create_name');
         let $createMap = $('#create_map');
+        let $chooseGame = $('#choose_game');
         $createName.removeClass('is-invalid');
+        $chooseGame.removeClass('is-invalid');
         $createMap.removeClass('is-invalid');
-        if ($createName.val().length === 0) {
-            $createName.addClass('is-invalid');
+
+        const roomType = $chooseGame.val();
+        if (roomType.length === 0 || !Object.keys(DATA).some((map) => equalsIgnoreCase(map, roomType))) {
+            $chooseGame.addClass('is-invalid');
             return;
         }
+
         const mapName = $createMap.val();
+        const MAP_DATA = DATA[roomType].MAPS;
         if (mapName.length === 0 || !Object.keys(MAP_DATA).some((map) => equalsIgnoreCase(map, mapName))) {
             $createMap.addClass('is-invalid');
             return;
         }
-        $createGroup.hide();
+
         const userName = $createName.val();
+        if (userName.length === 0) {
+            $createName.addClass('is-invalid');
+            return;
+        }
+
+        $createGroup.hide();
 
         // Send socket Event
-        sendCreateMessage(userName, mapName);
+        sendCreateMessage(userName, roomType, mapName);
     });
 }

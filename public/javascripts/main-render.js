@@ -2,8 +2,6 @@
  * Everything Related to Rendering the initial map
  */
 
-const DATA = require('./data.json');
-
 function setupMainMap(mapName) {
     $('#app_dom').show();
     setupMap(mapName);
