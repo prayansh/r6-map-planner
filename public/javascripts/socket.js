@@ -8,7 +8,8 @@ const session = {
     roomName: false, // Room Name
     floor: false,    // Floor Number
     username: false, // Username
-    clients: {}      // Clients
+    clients: {},     // Clients
+    roomType: '',    // Room Type (either R6 or VALORANT)
 };
 
 function setupSockets() {
