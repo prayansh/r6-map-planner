@@ -1,13 +1,15 @@
 // Everything related to the Intro Scene
+const DATA = require('./data.json');
 
 function showIntroDom() {
     $('#app_dom').hide();
     $('#intro_dom').show();
+    let $optionsGroup = $('#intro_options_group');
     let $joinGroup = $('#intro_join_group');
     let $createGroup = $('#intro_create_group');
-    let $optionsGroup = $('#intro_options_group');
 
     let html = '';
+    const MAP_DATA = DATA[session.roomType].MAPS;
     Object.keys(MAP_DATA).forEach(function (key, _) {
         html += `<option value="${key}">${key}</option>`;
 

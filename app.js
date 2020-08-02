@@ -1,6 +1,5 @@
 var DEV_MODE = false;
 var PORT = process.env.PORT || 3000;
-
 /**
  * Sets the DEV_MODE constant for development.
  * Example usage:
