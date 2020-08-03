@@ -12,6 +12,7 @@ function setupMainMap(mapName) {
 
 function setupMap(name) {
     var $mainScreen = $('#main_map');
+    const MAP_DATA = DATA[session.roomType].MAPS;
     var mData = MAP_DATA[name];
     var mFloors = mData.floors;
     if (mFloors) {
@@ -44,7 +45,7 @@ function setupMap(name) {
 function showFloor(numFloors, floor) {
     logger.info(`Showing floor: ${floor}`);
     for (var i = 0; i < numFloors; i++) {
-        if (i === floor) {
+        if (i <= floor) {
             $(`#floor_${i}`).show();
         } else {
             $(`#floor_${i}`).hide();
@@ -59,6 +60,7 @@ function showFloor(numFloors, floor) {
 }
 
 function setupFloorKeys(name) {
+    const MAP_DATA = DATA[session.roomType].MAPS;
     var mData = MAP_DATA[name];
     const length = Object.keys(mData.floors).length;
     showFloor(length, 0);
@@ -76,11 +78,13 @@ function setupOperatorIcons() {
     let html = '';
     const $list = $('#iconList');
     const size = 48;
+    const OP_LIST = DATA[session.roomType].OPERATORS;
     OP_LIST.forEach(function (op) {
-        const opName = capitalizeFirstLetter(op);
+        const opIcon = op.icon;
+        const opName = capitalizeFirstLetter(op.name);
         html = '';
         html += `<li class="icon-list-item">`;
-        html += `<img id="${op}Icon" src="images/operator/${op}.svg" draggable="false" height="${size}px" width="${size}px">`;
+        html += `<img id="${opName}Icon" src="images/${opIcon}" draggable="false" height="${size}px" width="${size}px">`;
         html += `${opName}`;
         html += `</li>`;
         $list.append(html);
@@ -98,12 +102,13 @@ function setupGadgetIcons() {
     let html = '';
     const $list = $('#gadgetIcons');
     const size = 48;
-    Object.keys(GADGET_DATA).forEach(function (key) {
-        const gadgetName = GADGET_DATA[key].name;
-        const gadgetIcon = GADGET_DATA[key].icon;
+    const GADGET_DATA = DATA[session.roomType].GADGETS;
+    GADGET_DATA.forEach(function (gadget) {
+        const gadgetName = gadget.name;
+        const gadgetIcon = gadget.icon;
         html = '';
         html += `<li class="icon-list-item">`;
-        html += `<img id="${key}Icon" src="images/gadget/${gadgetIcon}" draggable="false" height="${size}px" width="${size}px">`;
+        html += `<img id="${gadgetName}Icon" src="images/${gadgetIcon}" draggable="false" height="${size}px" width="${size}px">`;
         html += `${gadgetName}`;
         html += `</li>`;
         $list.append(html);

@@ -8,7 +8,8 @@ const session = {
     roomName: false, // Room Name
     floor: false,    // Floor Number
     username: false, // Username
-    clients: {}      // Clients
+    clients: {},     // Clients
+    roomType: '',    // Room Type (either R6 or VALORANT)
 };
 
 function setupSockets() {
@@ -17,6 +18,7 @@ function setupSockets() {
     session.socket.on('roomJoined', function (initData) { // {event: 'roomJoined'}
         logger.debug('Joined Room', initData);
         // Setup Session data
+        session.roomType = initData.roomType;
         session.userId = initData.userId;
         session.color = initData.color;
         session.mapName = initData.mapName;
@@ -42,9 +44,9 @@ function setupSockets() {
     });
 }
 
-function sendCreateMessage(name, mapName) {
+function sendCreateMessage(name, roomType, mapName) {
     logger.debug(`sendCreateMessage: {name: ${name}, mapName: ${mapName}`);
-    session.socket.emit('createRoom', {username: name, mapName: mapName});
+    session.socket.emit('createRoom', {username: name, roomType: roomType, mapName: mapName});
 }
 
 function sendJoinMessage(name, roomName, roomNotFoundCallback) {

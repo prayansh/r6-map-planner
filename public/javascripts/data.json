@@ -1,10 +1,4 @@
-/**
- * Global Variables and Constants
- */
-const SCREEN_WIDTH = 1920;
-const SCREEN_HEIGHT = 1080;
-
-const DATA = {
+{
   "R6": {
     "MAPS": {
       "BANK": {
@@ -809,4 +803,4 @@ const DATA = {
       }
     ]
   }
-};
+}
