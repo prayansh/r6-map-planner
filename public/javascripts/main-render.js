@@ -45,7 +45,7 @@ function setupMap(name) {
 function showFloor(numFloors, floor) {
     logger.info(`Showing floor: ${floor}`);
     for (var i = 0; i < numFloors; i++) {
-        if (i === floor) {
+        if (i <= floor) {
             $(`#floor_${i}`).show();
         } else {
             $(`#floor_${i}`).hide();

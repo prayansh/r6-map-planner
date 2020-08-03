@@ -570,10 +570,6 @@ const DATA = {
           {
             "floorNum": 1,
             "img": "valorant/map/bind/bind-1.svg"
-          },
-          {
-            "floorNum": 2,
-            "img": "valorant/map/bind/bind-2.jpg"
           }
         ]
       },
@@ -587,10 +583,6 @@ const DATA = {
           {
             "floorNum": 1,
             "img": "valorant/map/haven/haven-1.svg"
-          },
-          {
-            "floorNum": 2,
-            "img": "valorant/map/haven/haven-2.jpg"
           }
         ]
       },
@@ -604,10 +596,6 @@ const DATA = {
           {
             "floorNum": 1,
             "img": "valorant/map/split/split-1.svg"
-          },
-          {
-            "floorNum": 2,
-            "img": "valorant/map/split/split-2.jpg"
           }
         ]
       }
@@ -821,4 +809,4 @@ const DATA = {
       }
     ]
   }
-}
+};
